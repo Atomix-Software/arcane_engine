@@ -1,0 +1,12 @@
+# Build Directories
+bin/
+bin-int/
+
+# Visual Studio Directories/Files
+.vs/
+
+*.sln
+*.vcxproj*
+
+# In Prog Assets
+*.xcf
