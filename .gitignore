@@ -10,3 +10,7 @@ bin-int/
 
 # In Prog Assets
 *.xcf
+
+# ImGui Generated Files
+imgui.ini
+imgui*.ini
