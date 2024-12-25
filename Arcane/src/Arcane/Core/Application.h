@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Core.h"
+#include "Arcane/Core/Core.h"
+
+#include "Arcane/Events/Event.h"
+#include "Arcane/Events/ApplicationEvent.h"
 
 namespace Arcane
 {

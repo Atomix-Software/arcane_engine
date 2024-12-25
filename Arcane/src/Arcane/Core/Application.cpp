@@ -1,4 +1,7 @@
-#include "Application.h"
+#include <arcpch.h>
+
+#include "Arcane/core/Application.h"
+#include "Arcane/core/Log.h"
 
 namespace Arcane
 {
@@ -15,6 +18,9 @@ namespace Arcane
 
 	void Application::Run()
 	{
+		WindowResizeEvent e(1280, 720);
+		ARC_TRACE(e.ToString());
+
 		while (true)
 		{
 

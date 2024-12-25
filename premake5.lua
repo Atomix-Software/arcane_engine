@@ -27,6 +27,9 @@ project "Arcane"
 	targetdir("bin/" .. OUTPUT_DIR .. "/%{prj.name}")
 	objdir("bin-int/" .. OUTPUT_DIR .. "/%{prj.name}")
 	
+	pchheader "arcpch.h"
+	pchsource "Arcane/src/arcpch.cpp"
+	
 	files 
 	{
 		"%{prj.name}/src/**.cpp",
@@ -37,6 +40,7 @@ project "Arcane"
 	
 	includedirs 
 	{
+		"%{prj.name}/src",
 		"%{INCLUDE_DIR.GLFW}",
 		"%{INCLUDE_DIR.GLM}",
 		"%{INCLUDE_DIR.GLAD}",

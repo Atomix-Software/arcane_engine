@@ -1,13 +1,13 @@
-#include <iostream>
-
 #include <Arcane.h>
+
+#include <iostream>
 
 class Playground : public Arcane::Application
 {
 public:
 	Playground()
 	{
-
+		ARC_TRACE("Application Created!");
 	}
 
 	~Playground()
