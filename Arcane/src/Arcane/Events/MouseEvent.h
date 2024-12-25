@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Arcane/Events/Event.h"
-#include "Arcane/MouseCodes.h"
+#include "Arcane/Core/MouseCodes.h"
 
 namespace Arcane
 {

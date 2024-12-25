@@ -1,13 +1,28 @@
 #include <Arcane.h>
 
-#include <iostream>
+class ExampleLayer : public Arcane::Layer
+{
+public:
+	ExampleLayer() :
+		Layer("Example") {}
+
+	void OnUpdate() override
+	{
+
+	}
+
+	void OnEvent(Arcane::Event& event)
+	{
+
+	}
+};
 
 class Playground : public Arcane::Application
 {
 public:
 	Playground()
 	{
-		ARC_TRACE("Application Created!");
+		PushLayer(new ExampleLayer());
 	}
 
 	~Playground()

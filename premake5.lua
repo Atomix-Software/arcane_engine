@@ -75,14 +75,17 @@ project "Arcane"
 		
 	filter "configurations:Debug"
 		defines "ARC_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 		
 	filter "configurations:Release"
 		defines "ARC_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 		
 	filter "configurations:Distribution"
 		defines "ARC_DIST"
+		buildoptions "/MD"
 		optimize "On"
 		
 project "Playground"
@@ -125,12 +128,15 @@ project "Playground"
 		
 	filter "configurations:Debug"
 		defines "ARC_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 		
 	filter "configurations:Release"
 		defines "ARC_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 		
 	filter "configurations:Distribution"
 		defines "ARC_DIST"
+		buildoptions "/MD"
 		optimize "On"
