@@ -1,9 +1,5 @@
 #include <arcpch.h>
 
-#ifndef GLFW_INCLUDE_NONE
-	#define GLFW_INCLUDE_NONE
-#endif
-
 #include "Platform/Windows/WinWindow.h"
 
 #include "Arcane/Events/ApplicationEvent.h"
