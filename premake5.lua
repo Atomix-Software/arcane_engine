@@ -22,6 +22,8 @@ project "Arcane"
 	kind "SharedLib"
 	language "C++"
 	
+	buildoptions{"/utf-8"}
+	
 	targetdir("bin/" .. OUTPUT_DIR .. "/%{prj.name}")
 	objdir("bin-int/" .. OUTPUT_DIR .. "/%{prj.name}")
 	
@@ -83,6 +85,8 @@ project "Playground"
 	location "Playground"
 	kind "ConsoleApp"
 	language "C++"
+	
+	buildoptions{"/utf-8"}
 	
 	targetdir("bin/" .. OUTPUT_DIR .. "/%{prj.name}")
 	objdir("bin-int/" .. OUTPUT_DIR .. "/%{prj.name}")

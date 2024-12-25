@@ -6,6 +6,8 @@ extern Arcane::Application* Arcane::CreateApplication();
 
 int main(int argc, char* argv[])
 {
+	Arcane::Log::Init();
+
 	auto app = Arcane::CreateApplication();
 	app->Run();
 	delete app;
