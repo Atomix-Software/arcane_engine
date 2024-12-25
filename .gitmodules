@@ -1,0 +1,9 @@
+[submodule "Arcane/vendors/glfw"]
+	path = Arcane/vendors/glfw
+	url = https://github.com/Atomix-Software/glfw
+[submodule "Arcane/vendors/glm"]
+	path = Arcane/vendors/glm
+	url = https://github.com/Atomix-Software/glm
+[submodule "Arcane/vendors/spdlog"]
+	path = Arcane/vendors/spdlog
+	url = https://github.com/gabime/spdlog
