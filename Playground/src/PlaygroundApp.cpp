@@ -23,6 +23,7 @@ public:
 	Playground()
 	{
 		PushLayer(new ExampleLayer());
+		PushOverlay(new Arcane::ImGuiLayer());
 	}
 
 	~Playground()

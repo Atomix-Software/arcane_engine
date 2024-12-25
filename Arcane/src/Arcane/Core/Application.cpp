@@ -8,8 +8,13 @@
 namespace Arcane
 {
 
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application()
 	{
+		ARC_CORE_ASSERT(!s_Instance, "Application already exists!");
+		s_Instance = this;
+
 		m_Window = Unique<Window>(Window::Create());
 		m_Window->SetEventCallback(ARC_BIND_EVENT_FN(Application::OnEvent));
 	}
@@ -22,11 +27,13 @@ namespace Arcane
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
 		m_LayerStack.PushOverlay(overlay);
+		overlay->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e)

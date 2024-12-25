@@ -13,14 +13,17 @@ workspace "ArcaneEngine"
 	INCLUDE_DIR["GLAD"] = "Arcane/vendors/glad/include"
 	INCLUDE_DIR["STB"] = "Arcane/vendors/stb"
 	INCLUDE_DIR["SPD_LOG"] = "Arcane/vendors/spdlog/include"
+	INCLUDE_DIR["IMGUI"] = "Arcane/vendors/imgui"
 	
 	include "Arcane/vendors/glfw"
 	include "Arcane/vendors/glad"
+	include "Arcane/vendors/imgui"
 	
 project "Arcane"
 	location "Arcane"
 	kind "SharedLib"
 	language "C++"
+	staticruntime "Off"
 	
 	buildoptions{"/utf-8"}
 	
@@ -45,19 +48,20 @@ project "Arcane"
 		"%{INCLUDE_DIR.GLM}",
 		"%{INCLUDE_DIR.GLAD}",
 		"%{INCLUDE_DIR.STB}",
-		"%{INCLUDE_DIR.SPD_LOG}"
+		"%{INCLUDE_DIR.SPD_LOG}",
+		"%{INCLUDE_DIR.IMGUI}"
 	}
 	
 	links 
 	{
 		"glfw",
 		"glad",
+		"ImGui",
 		"opengl32.lib"
 	}
 	
 	filter "system:windows"
 		cppdialect "C++20"
-		staticruntime "On"
 		systemversion "latest"
 	
 		defines 
@@ -75,23 +79,24 @@ project "Arcane"
 		
 	filter "configurations:Debug"
 		defines "ARC_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 		
 	filter "configurations:Release"
 		defines "ARC_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 		
 	filter "configurations:Distribution"
 		defines "ARC_DIST"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 		
 project "Playground"
 	location "Playground"
 	kind "ConsoleApp"
 	language "C++"
+	staticruntime "off"
 	
 	buildoptions{"/utf-8"}
 	
@@ -118,7 +123,6 @@ project "Playground"
 	
 	filter "system:windows"
 		cppdialect "C++20"
-		staticruntime "On"
 		systemversion "latest"
 	
 		defines 
@@ -128,15 +132,15 @@ project "Playground"
 		
 	filter "configurations:Debug"
 		defines "ARC_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 		
 	filter "configurations:Release"
 		defines "ARC_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 		
 	filter "configurations:Distribution"
 		defines "ARC_DIST"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"

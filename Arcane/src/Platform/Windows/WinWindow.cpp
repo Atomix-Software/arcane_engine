@@ -70,6 +70,7 @@ namespace Arcane
 		// Set GLFW Callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 			{
+				glViewport(0, 0, width, height);
 				WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
 				data.Width = width;
 				data.Height = height;
@@ -112,6 +113,13 @@ namespace Arcane
 						break;
 					}
 				}
+			});
+
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int ch)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				KeyTypedEvent event(ch);
+				data.EventCallback(event);
 			});
 
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
