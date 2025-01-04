@@ -15,15 +15,19 @@ workspace "ArcaneEngine"
 	INCLUDE_DIR["SPD_LOG"] = "Arcane/vendors/spdlog/include"
 	INCLUDE_DIR["IMGUI"] = "Arcane/vendors/imgui"
 	
-	include "Arcane/vendors/glfw"
-	include "Arcane/vendors/glad"
-	include "Arcane/vendors/imgui"
+	group "Dependencies"
+		include "Arcane/vendors/glfw"
+		include "Arcane/vendors/glad"
+		include "Arcane/vendors/imgui"
+	
+	group ""
 	
 project "Arcane"
 	location "Arcane"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
-	staticruntime "Off"
+	cppdialect "C++20"
+	staticruntime "on"
 	
 	buildoptions{"/utf-8"}
 	
@@ -61,7 +65,6 @@ project "Arcane"
 	}
 	
 	filter "system:windows"
-		cppdialect "C++20"
 		systemversion "latest"
 	
 		defines 
@@ -72,31 +75,27 @@ project "Arcane"
 			"ARC_BUILD_DLL"
 		}
 		
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. OUTPUT_DIR .. "/Playground")
-		}
-		
 	filter "configurations:Debug"
 		defines "ARC_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 		
 	filter "configurations:Release"
 		defines "ARC_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 		
 	filter "configurations:Distribution"
 		defines "ARC_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 		
 project "Playground"
 	location "Playground"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "off"
+	cppdialect "C++20"
+	staticruntime "on"
 	
 	buildoptions{"/utf-8"}
 	
@@ -114,7 +113,9 @@ project "Playground"
 	includedirs 
 	{
 		"Arcane/src",
-		"%{INCLUDE_DIR.SPD_LOG}"
+		"%{INCLUDE_DIR.SPD_LOG}",
+		"%{INCLUDE_DIR.IMGUI}",
+		"%{INCLUDE_DIR.GLM}",
 	}
 	
 	links {
@@ -122,7 +123,6 @@ project "Playground"
 	}
 	
 	filter "system:windows"
-		cppdialect "C++20"
 		systemversion "latest"
 	
 		defines 
@@ -133,14 +133,14 @@ project "Playground"
 	filter "configurations:Debug"
 		defines "ARC_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 		
 	filter "configurations:Release"
 		defines "ARC_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 		
 	filter "configurations:Distribution"
 		defines "ARC_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
