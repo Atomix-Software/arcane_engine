@@ -6,13 +6,12 @@
 #include "Arcane/Events/KeyEvent.h"
 #include "Arcane/Events/MouseEvent.h"
 
-#include <glad/glad.h>
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Arcane
 {
 
 	static bool s_GLFWInitialized = false;
-	static bool s_GLADInitialized = false;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
@@ -55,22 +54,14 @@ namespace Arcane
 		const GLFWvidmode* vid_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwSetWindowPos(m_Window, (vid_mode->width - props.Width) / 2, (vid_mode->height - props.Height) / 2);
 
-		glfwMakeContextCurrent(m_Window);
-		glfwSetWindowUserPointer(m_Window, &m_Data);
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
+
 		SetVSync(true);
+		glfwSetWindowUserPointer(m_Window, &m_Data);
 
-		if (!s_GLADInitialized)
-		{
-			int success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-			ARC_CORE_ASSERT(success, "Could not initialize OpenGL!");
-
-			s_GLADInitialized = true;
-		}
-
-		// Set GLFW Callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
 			{
-				glViewport(0, 0, width, height);
 				WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
 				data.Width = width;
 				data.Height = height;
@@ -167,7 +158,7 @@ namespace Arcane
 	void WinWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 
 	void WinWindow::SetVSync(bool enabled)

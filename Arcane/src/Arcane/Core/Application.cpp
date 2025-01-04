@@ -58,7 +58,7 @@ namespace Arcane
 
 	void Application::Run()
 	{
-		glClearColor(0.75f, 0.0f, 0.75f, 1.0f);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 		while (m_Running)
 		{

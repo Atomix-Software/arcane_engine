@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Arcane/Core/Window.h"
+#include "Arcane/Render/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>
 
@@ -30,6 +31,7 @@ namespace Arcane
 
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{
