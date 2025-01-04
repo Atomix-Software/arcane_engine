@@ -1,7 +1,7 @@
 #include <arcpch.h>
 
-#include "Arcane/core/Application.h"
-#include "Arcane/core/Log.h"
+#include "Arcane/Core/Application.h"
+#include "Arcane/Core/Log.h"
 
 #include <glad/glad.h>
 
@@ -17,6 +17,9 @@ namespace Arcane
 
 		m_Window = Unique<Window>(Window::Create());
 		m_Window->SetEventCallback(ARC_BIND_EVENT_FN(Application::OnEvent));
+
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -27,13 +30,11 @@ namespace Arcane
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
-		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
 		m_LayerStack.PushOverlay(overlay);
-		overlay->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e)
@@ -65,6 +66,11 @@ namespace Arcane
 
 			for (auto layer : m_LayerStack)
 				layer->OnUpdate();
+
+			m_ImGuiLayer->Begin();
+			for (auto layer : m_LayerStack)
+				layer->OnImGuiRender();
+			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}

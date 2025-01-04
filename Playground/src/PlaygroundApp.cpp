@@ -1,17 +1,26 @@
 #include <Arcane.h>
 
+#include <imgui.h>
+
 class ExampleLayer : public Arcane::Layer
 {
 public:
 	ExampleLayer() :
 		Layer("Example") {}
 
-	void OnUpdate() override
+	virtual void OnUpdate() override
 	{
 
 	}
 
-	void OnEvent(Arcane::Event& event)
+	virtual void OnImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello, World!");
+		ImGui::End();
+	}
+
+	virtual void OnEvent(Arcane::Event& event)
 	{
 
 	}
@@ -23,7 +32,6 @@ public:
 	Playground()
 	{
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Arcane::ImGuiLayer());
 	}
 
 	~Playground()

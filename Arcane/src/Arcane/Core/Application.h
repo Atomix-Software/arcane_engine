@@ -4,8 +4,9 @@
 #include "Arcane/Core/Window.h"
 #include "Arcane/Core/LayerStack.h"
 
-#include "Arcane/Events/Event.h"
 #include "Arcane/Events/ApplicationEvent.h"
+
+#include "Arcane/ImGui/ImGuiLayer.h"
 
 namespace Arcane
 {
@@ -29,6 +30,7 @@ namespace Arcane
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		Unique<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
