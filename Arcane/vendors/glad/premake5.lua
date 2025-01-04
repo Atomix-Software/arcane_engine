@@ -17,11 +17,11 @@ project "glad"
     }
 
 	filter "system:linux"
-		pic "On"
+		pic "on"
 		systemversion "latest"
 
 	filter "system:macosx"
-		pic "On"
+		pic "on"
 
 	filter "system:windows"
 		systemversion "latest"
