@@ -3,6 +3,7 @@
 #include "Arcane/Core/Base.h"
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace Arcane
 {
@@ -14,6 +15,8 @@ namespace Arcane
 
 		void Bind() const;
 		void Unbind() const;
+
+		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 
 	private:
 		uint32_t m_RendererId;

@@ -3,6 +3,7 @@
 #include "Shader.h"
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Arcane
 {
@@ -94,5 +95,11 @@ namespace Arcane
     void Shader::Unbind() const
     {
         glUseProgram(0);
+    }
+
+    void Shader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix)
+    {
+        GLint location = glGetUniformLocation(m_RendererId, name.c_str());
+        glUniformMatrix4fv(location, 1, false, glm::value_ptr(matrix));
     }
 }

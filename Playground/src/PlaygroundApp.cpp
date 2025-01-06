@@ -8,7 +8,7 @@ class ExampleLayer : public Layer
 {
 public:
 	ExampleLayer() :
-		Layer("Example") {}
+		Layer("Example"), camera(-1, 1, -1, 1) {}
 
 	virtual void OnAttach() override
 	{
@@ -16,10 +16,12 @@ public:
 			#version 330 core
 
 			layout(location=0) in vec3 a_Position;
+
+			uniform mat4 u_ProjectionView;
 			
 			void main()
 			{
-				gl_Position = vec4(a_Position, 1);
+				gl_Position = u_ProjectionView * vec4(a_Position, 1);
 			}
 		)";
 
@@ -62,8 +64,28 @@ public:
 
 	virtual void OnUpdate() override
 	{
+		glm::vec3 camPos = camera.GetPosition();
+		float speed = 2.5f * (1.0f / 60.0f);
+
+		if (Input::IsKeyPressed(Key::W))
+			camPos.y += speed;
+		else if (Input::IsKeyPressed(Key::S))
+			camPos.y -= speed;
+
+		if (Input::IsKeyPressed(Key::A))
+			camPos.x -= speed;
+		else if (Input::IsKeyPressed(Key::D))
+			camPos.x += speed;
+
+		camera.SetPosition(camPos);
+
+		Renderer::BeginScene();
 		shader->Bind();
+		shader->UploadUniformMat4("u_ProjectionView", camera.GetProjectionView());
+
 		Renderer::Submit(vao);
+
+		Renderer::EndScene();
 	}
 
 	virtual void OnImGuiRender() override
@@ -79,6 +101,8 @@ public:
 private:
 	std::shared_ptr<Shader> shader;
 	std::shared_ptr<VertexArray> vao;
+
+	OrthographicCamera camera;
 };
 
 class Playground : public Application
