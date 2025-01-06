@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Arcane/Core/Base.h"
+#include "Arcane/Core/Timestep.h"
 #include "Arcane/Events/Event.h"
 
 namespace Arcane
@@ -16,7 +17,7 @@ namespace Arcane
 		virtual void OnDetach() {}
 		virtual void OnImGuiRender() {}
 
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnEvent(Event& event) {}
 
 		inline const std::string& GetName() const { return m_DebugName; }

@@ -3,6 +3,8 @@
 #include "Arcane/Core/Application.h"
 #include "Arcane/Core/Log.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Arcane
 {
 
@@ -61,8 +63,12 @@ namespace Arcane
 			RenderCMD::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 			RenderCMD::Clear();
 
+			float time = (float) glfwGetTime();
+			Timestep timeStep = time - m_LastFrameTime;
+			m_LastFrameTime = time;
+
 			for (auto layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(timeStep);
 
 			m_ImGuiLayer->Begin();
 			for (auto layer : m_LayerStack)

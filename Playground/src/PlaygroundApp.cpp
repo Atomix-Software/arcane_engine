@@ -62,12 +62,11 @@ public:
 		vao->SetIndexBuffer(ebo);
 	}
 
-	virtual void OnUpdate() override
+	virtual void OnUpdate(Timestep ts) override
 	{
 		glm::vec3 camPos = camera.GetPosition();
 		float rotation = camera.GetRotation();
-
-		float speed = 2.5f * (1.0f / 60.0f);
+		float speed = 2.5f * ts;
 
 		if (Input::IsKeyPressed(Key::W))
 			camPos.y += speed;
@@ -80,9 +79,9 @@ public:
 			camPos.x += speed;
 
 		if (Input::IsKeyPressed(Key::Q))
-			rotation += speed;
+			rotation += speed * 15.f;
 		else if (Input::IsKeyPressed(Key::E))
-			rotation -= speed;
+			rotation -= speed * 15.f;
 
 		camera.SetPosition(camPos);
 		camera.SetRotation(rotation);
@@ -101,7 +100,14 @@ public:
 
 	virtual void OnEvent(Event& event)
 	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<KeyPressedEvent>(ARC_BIND_EVENT_FN(ExampleLayer::OnKeyPressed));
+	}
 
+	bool OnKeyPressed(KeyPressedEvent& event)
+	{
+
+		return false;
 	}
 
 private:

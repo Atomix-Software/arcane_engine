@@ -3,6 +3,7 @@
 #include "Arcane/Core/Base.h"
 #include "Arcane/Core/Window.h"
 #include "Arcane/Core/LayerStack.h"
+#include "Arcane/Core/Timestep.h"
 
 #include "Arcane/Events/ApplicationEvent.h"
 
@@ -35,6 +36,7 @@ namespace Arcane
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		float m_LastFrameTime = 0.0f;
 
 	private:
 		static Application* s_Instance;
