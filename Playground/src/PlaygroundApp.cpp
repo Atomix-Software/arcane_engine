@@ -8,7 +8,7 @@ class ExampleLayer : public Layer
 {
 public:
 	ExampleLayer() :
-		Layer("Example"), camera(-1, 1, -1, 1) {}
+		Layer("Example"), camera(-1.6f, 1.6f, -0.9f, 0.9f) {}
 
 	virtual void OnAttach() override
 	{
@@ -65,6 +65,8 @@ public:
 	virtual void OnUpdate() override
 	{
 		glm::vec3 camPos = camera.GetPosition();
+		float rotation = camera.GetRotation();
+
 		float speed = 2.5f * (1.0f / 60.0f);
 
 		if (Input::IsKeyPressed(Key::W))
@@ -77,13 +79,17 @@ public:
 		else if (Input::IsKeyPressed(Key::D))
 			camPos.x += speed;
 
+		if (Input::IsKeyPressed(Key::Q))
+			rotation += speed;
+		else if (Input::IsKeyPressed(Key::E))
+			rotation -= speed;
+
 		camera.SetPosition(camPos);
+		camera.SetRotation(rotation);
 
-		Renderer::BeginScene();
-		shader->Bind();
-		shader->UploadUniformMat4("u_ProjectionView", camera.GetProjectionView());
+		Renderer::BeginScene(camera);
 
-		Renderer::Submit(vao);
+		Renderer::Submit(shader, vao);
 
 		Renderer::EndScene();
 	}

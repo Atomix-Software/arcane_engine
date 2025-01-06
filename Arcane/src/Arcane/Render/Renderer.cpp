@@ -4,9 +4,11 @@
 
 namespace Arcane
 {
-	void Renderer::BeginScene()
-	{
+	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData();
 
+	void Renderer::BeginScene(OrthographicCamera& camera)
+	{
+		m_SceneData->ProjectionView = camera.GetProjectionView();
 	}
 
 	void Renderer::EndScene()
@@ -14,8 +16,11 @@ namespace Arcane
 
 	}
 
-	void Renderer::Submit(const std::shared_ptr<VertexArray>& vao)
+	void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vao)
 	{
+		shader->Bind();
+		shader->UploadUniformMat4("u_ProjectionView", m_SceneData->ProjectionView);
+
 		vao->Bind();
 		RenderCMD::DrawIndexed(vao);
 	}
