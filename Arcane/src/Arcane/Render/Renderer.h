@@ -10,25 +10,32 @@ namespace Arcane
 	class Renderer
 	{
 	public:
-		static void BeginScene(OrthographicCamera& camera);
-		static void EndScene();
-
-		static void Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao);
-
-		inline static RenderAPI::API GetAPI() { return RenderAPI::GetAPI(); }
-
-	private:
 		struct SceneData
 		{
 			std::vector<Shared<Shader>> Shaders;
-			std::unordered_map<Shared<Shader>, std::vector<Shared<VertexArray>>> Objects;
+			std::unordered_map<Shared<Shader>, std::vector<std::pair<Shared<VertexArray>, glm::mat4>>> Objects;
 
 			glm::mat4 ProjectionView;
 
 			int ShaderCount = 0;
 			int ObjectCount = 0;
+
+			bool Rendering = false;
 		};
 
+	public:
+		static void BeginScene(OrthographicCamera& camera);
+		static void EndScene();
+
+		static void Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const glm::vec3 position, float rotation = 0.0f, float scale = 1.0f);
+		static void Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const glm::mat4& transform = glm::mat4(1.0));
+
+		inline static RenderAPI::API GetAPI() { return RenderAPI::GetAPI(); }
+
+		inline static const SceneData& GetSceneData() { return *m_SceneData; }
+
+	private:
 		static SceneData* m_SceneData;
+
 	};
 }

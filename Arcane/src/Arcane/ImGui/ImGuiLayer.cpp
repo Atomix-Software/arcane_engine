@@ -67,7 +67,7 @@ namespace Arcane
         static bool show = true;
         ImGui::ShowDemoWindow(&show);
 
-        ImGui::Begin("Render Info");
+        ImGui::Begin("Renderer Info");
         ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
         ImGui::Text("Renderer: %s", glGetString(GL_RENDERER));
         ImGui::Text("OpenGL Version: %s", glGetString(GL_VERSION));

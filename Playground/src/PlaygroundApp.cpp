@@ -18,10 +18,11 @@ public:
 			layout(location=0) in vec3 a_Position;
 
 			uniform mat4 u_ProjectionView;
+			uniform mat4 u_Model;
 			
 			void main()
 			{
-				gl_Position = u_ProjectionView * vec4(a_Position, 1.0);
+				gl_Position = u_ProjectionView * u_Model * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -36,7 +37,7 @@ public:
 			}
 		)";
 
-		shader = Shared<Shader>(new Shader(vertSrc, fragSrc));
+		shader = Shader::Create(vertSrc, fragSrc);
 
 		vao = VertexArray::Create();
 
@@ -51,6 +52,7 @@ public:
 		vbo->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" }
 		});
+
 		vao->AddVertexBuffer(vbo);
 
 		uint32_t indices[] = {
@@ -87,15 +89,19 @@ public:
 		camera.SetRotation(rotation);
 
 		Renderer::BeginScene(camera);
-
-		Renderer::Submit(shader, vao);
-
+		Renderer::Submit(shader, vao, {  0.75f, 0, 0 });
+		Renderer::Submit(shader, vao, { -0.75f, 0, 0 });
 		Renderer::EndScene();
 	}
 
 	virtual void OnImGuiRender() override
 	{
+		Renderer::SceneData data = Renderer::GetSceneData();
 
+		ImGui::Begin("Render Info");
+		ImGui::Text("Shader Count: %d", data.ShaderCount);
+		ImGui::Text("Object Count: %d", data.ObjectCount);
+		ImGui::End();
 	}
 
 	virtual void OnEvent(Event& event)

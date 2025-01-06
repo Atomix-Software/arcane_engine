@@ -10,16 +10,28 @@ namespace Arcane
 	class ARC_API Shader
 	{
 	public:
-		Shader(const std::string& vertSrc, const std::string& fragSrc);
-		~Shader();
+		Shader() = default;
+		virtual ~Shader() {}
 
-		void Bind() const;
-		void Unbind() const;
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
 
-		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
+		virtual void UploadUniformBool(const std::string& name, bool value) const = 0;
 
-		bool operator==(Shader& other) { return m_RendererId == other.m_RendererId; }
-	private:
-		uint32_t m_RendererId;
+		virtual void UploadUniformInt(const std::string& name, int value) const = 0;
+		virtual void UploadUniformInt2(const std::string& name, const glm::ivec2& value) const = 0;
+		virtual void UploadUniformInt3(const std::string& name, const glm::ivec3& value) const = 0;
+		virtual void UploadUniformInt4(const std::string& name, const glm::ivec4& value) const = 0;
+
+		virtual void UploadUniformFloat(const std::string& name, float value) const = 0;
+		virtual void UploadUniformFloat2(const std::string& name, const glm::vec2& value) const = 0;
+		virtual void UploadUniformFloat3(const std::string& name, const glm::vec3& value) const = 0;
+		virtual void UploadUniformFloat4(const std::string& name, const glm::vec4& value) const = 0;
+
+		virtual void UploadUniformMat4(const std::string& name, const glm::mat4& value) const = 0;
+
+		virtual bool operator==(Shader& other) = 0;
+
+		static Shared<Shader> Create(const std::string& vertSrc, const std::string& fragSrc);
 	};
 }

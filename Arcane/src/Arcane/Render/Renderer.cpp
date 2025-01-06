@@ -8,37 +8,60 @@ namespace Arcane
 
     void Renderer::BeginScene(OrthographicCamera& camera)
     {
+        ARC_CORE_ASSERT(!m_SceneData->Rendering, "Must call EndScene before BeginScene!");
+
         m_SceneData->ShaderCount = 0;
-        m_SceneData->Objects.clear();
+        m_SceneData->ObjectCount = 0;
 
         m_SceneData->ProjectionView = camera.GetProjection() * camera.GetView();
+        m_SceneData->Rendering = true;
     }
 
     void Renderer::EndScene()
     {
-        for (Shared<Shader> shader : m_SceneData->Shaders)
+        ARC_CORE_ASSERT(m_SceneData->Rendering, "Must call BeginScene before EndScene!");
+
+        for (auto& shader : m_SceneData->Shaders)
         {
             shader->Bind();
             shader->UploadUniformMat4("u_ProjectionView", m_SceneData->ProjectionView);
 
             const auto& objects = m_SceneData->Objects[shader];
-            for (const auto& obj : objects)
+            for (const auto& [vao, transform] : objects)
             {
-                obj->Bind();
-                RenderCMD::DrawIndexed(obj);
+                vao->Bind();
+                shader->UploadUniformMat4("u_Model", transform);
+                RenderCMD::DrawIndexed(vao);
             }
         }
 
         m_SceneData->Shaders.clear();
+        m_SceneData->Objects.clear();
+        m_SceneData->Rendering = false;
     }
 
-    void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao)
+    void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const glm::vec3 position, float rotation, float scale)
     {
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::rotate(glm::mat4(1.0), glm::radians(rotation), glm::vec3(0, 0, 1)) *
+            glm::scale(glm::mat4(1.0), glm::vec3(scale));
+
+        Submit(shader, vao, transform);
+    }
+
+    void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const glm::mat4& transform)
+    {
+        ARC_CORE_ASSERT(m_SceneData->Rendering, "Must call BeginScene before Submit!");
+
         // Add shader if not already in the list
         if (std::find(m_SceneData->Shaders.begin(), m_SceneData->Shaders.end(), shader) == m_SceneData->Shaders.end())
+        {
             m_SceneData->Shaders.push_back(shader);
+            m_SceneData->ShaderCount++;
+        }
 
-        // Associate the VAO with the shader
-        m_SceneData->Objects[shader].push_back(vao);
+        // Associate the VAO and transform with the shader
+        m_SceneData->Objects[shader].emplace_back(vao, transform);
+        m_SceneData->ObjectCount++;
     }
 }
