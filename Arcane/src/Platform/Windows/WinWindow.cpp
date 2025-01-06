@@ -8,6 +8,8 @@
 
 #include "Platform/OpenGL/OpenGLContext.h"
 
+#include <glad/glad.h>
+
 namespace Arcane
 {
 

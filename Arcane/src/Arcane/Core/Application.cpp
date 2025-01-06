@@ -3,8 +3,6 @@
 #include "Arcane/Core/Application.h"
 #include "Arcane/Core/Log.h"
 
-#include <glad/glad.h>
-
 namespace Arcane
 {
 
@@ -58,11 +56,11 @@ namespace Arcane
 
 	void Application::Run()
 	{
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 		while (m_Running)
 		{
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCMD::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+			RenderCMD::Clear();
 
 			for (auto layer : m_LayerStack)
 				layer->OnUpdate();

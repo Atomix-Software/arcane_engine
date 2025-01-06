@@ -8,6 +8,9 @@
 #include "Arcane/Core/KeyCodes.h"
 #include "Arcane/Core/MouseCodes.h"
 
+#include "Arcane/Render/Shader.h"
+#include "Arcane/Render/VertexArray.h"
+
 #include "Arcane/ImGui/ImGuiLayer.h"
 
 #include "Arcane/Core/EntryPoint.h"

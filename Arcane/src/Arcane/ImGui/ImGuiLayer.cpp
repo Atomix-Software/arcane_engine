@@ -10,6 +10,7 @@
 #include <backends/imgui_impl_opengl3.h>
 
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace Arcane
 {
@@ -65,6 +66,12 @@ namespace Arcane
     {
         static bool show = true;
         ImGui::ShowDemoWindow(&show);
+
+        ImGui::Begin("Render Info");
+        ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
+        ImGui::Text("Renderer: %s", glGetString(GL_RENDERER));
+        ImGui::Text("OpenGL Version: %s", glGetString(GL_VERSION));
+        ImGui::End();
     }
 
     void ImGuiLayer::Begin()

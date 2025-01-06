@@ -6,6 +6,8 @@
 
 #include "Arcane/Events/ApplicationEvent.h"
 
+#include "Arcane/Render/Renderer.h"
+
 #include "Arcane/ImGui/ImGuiLayer.h"
 
 namespace Arcane
