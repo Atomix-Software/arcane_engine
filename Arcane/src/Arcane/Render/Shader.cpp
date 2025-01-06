@@ -39,12 +39,14 @@ namespace Arcane
         glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
         if (success == GL_FALSE)
         {
-            char* infoLog = (char*)malloc(1024);
+            char* infoLog = (char*)malloc(1024 * 5);
             GLint maxLength = 0;
             glGetShaderiv(fragment, GL_INFO_LOG_LENGTH, &maxLength);
             glGetShaderInfoLog(fragment, maxLength, &maxLength, infoLog);
 
             ARC_CORE_ERROR("Shader Compiler Error: {0}", infoLog);
+
+            glDeleteShader(vertex);
             glDeleteShader(fragment);
 
             free(infoLog);
@@ -60,7 +62,7 @@ namespace Arcane
         glGetProgramiv(m_RendererId, GL_LINK_STATUS, &success);
         if (success == GL_FALSE)
         {
-            char* infoLog = (char*)malloc(1024);
+            char* infoLog = (char*)malloc(1024 * 5);
             GLint maxLength = 0;
             glGetProgramiv(m_RendererId, GL_INFO_LOG_LENGTH, &maxLength);
             glGetProgramInfoLog(m_RendererId, maxLength, &maxLength, &infoLog[0]);

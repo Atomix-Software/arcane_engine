@@ -10,6 +10,7 @@ namespace Arcane
 	{
 		switch (type)
 		{
+		case ShaderDataType::None:	 return GL_NONE;
 		case ShaderDataType::Int:	 return GL_INT;
 		case ShaderDataType::Int2:	 return GL_INT;
 		case ShaderDataType::Int3:	 return GL_INT;
@@ -46,7 +47,7 @@ namespace Arcane
 
 	void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
 	{
-		glBindVertexArray(m_RendererID);
+		Bind();
 		vertexBuffer->Bind();
 
 		uint32_t index = 0;

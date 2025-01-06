@@ -56,7 +56,6 @@ namespace Arcane
 
 	void Application::Run()
 	{
-
 		while (m_Running)
 		{
 			RenderCMD::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });

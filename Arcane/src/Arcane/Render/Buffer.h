@@ -51,6 +51,7 @@ namespace Arcane
 		{
 			switch (Type)
 			{
+				case ShaderDataType::None:	 break;
 				case ShaderDataType::Int:	 return 1;
 				case ShaderDataType::Int2:	 return 2;
 				case ShaderDataType::Int3:	 return 3;

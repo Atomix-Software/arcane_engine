@@ -6,9 +6,13 @@
 
 namespace Arcane
 {
+	/*
+	* Vertex buffer
+	*/
+
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 	{
-		glGenBuffers(1, &m_RendererId);
+		glCreateBuffers(1, &m_RendererId);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 	}
@@ -28,10 +32,14 @@ namespace Arcane
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
+	/*
+	* Index buffer
+	*/
+
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count) :
 		m_Count(count)
 	{
-		glGenBuffers(1, &m_RendererId);
+		glCreateBuffers(1, &m_RendererId);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererId);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count, indices, GL_STATIC_DRAW);
 	}

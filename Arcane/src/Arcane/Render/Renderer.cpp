@@ -8,7 +8,7 @@ namespace Arcane
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		m_SceneData->ProjectionView = camera.GetProjectionView();
+		m_SceneData->ProjectionView = camera.GetProjection() * camera.GetView();
 	}
 
 	void Renderer::EndScene()

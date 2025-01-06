@@ -8,12 +8,12 @@ class ExampleLayer : public Layer
 {
 public:
 	ExampleLayer() :
-		Layer("Example"), camera(-1.6f, 1.6f, -0.9f, 0.9f) {}
+		Layer("Example"), camera(-1.6f, 1.5f, -0.9f, 0.9f) {}
 
 	virtual void OnAttach() override
 	{
 		std::string vertSrc = R"(
-			#version 330 core
+			#version 410 core
 
 			layout(location=0) in vec3 a_Position;
 
@@ -21,12 +21,12 @@ public:
 			
 			void main()
 			{
-				gl_Position = u_ProjectionView * vec4(a_Position, 1);
+				gl_Position = u_ProjectionView * vec4(a_Position, 1.0);
 			}
 		)";
 
 		std::string fragSrc = R"(
-			#version 330 core
+			#version 410 core
 			
 			layout(location=0) out vec4 a_FragColor;
 
@@ -36,29 +36,29 @@ public:
 			}
 		)";
 
-		shader.reset(new Shader(vertSrc, fragSrc));
+		shader = Shared<Shader>(new Shader(vertSrc, fragSrc));
 
 		vao = VertexArray::Create();
 
 		float vertices[] = {
 			-0.5f, -0.5f, 0.0f,
 			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f
+			 0.5f,  0.5f, 0.0f,
+			-0.5f,  0.5f, 0.0f
 		};
 
-		std::shared_ptr<VertexBuffer> vbo = VertexBuffer::Create(vertices, sizeof(vertices));
-
+		Shared<VertexBuffer> vbo = VertexBuffer::Create(vertices, sizeof(vertices));
 		vbo->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" }
 		});
-
 		vao->AddVertexBuffer(vbo);
 
 		uint32_t indices[] = {
-			0, 1, 2
+			0, 1, 2,
+			2, 3, 0
 		};
 
-		std::shared_ptr<IndexBuffer> ebo = IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
+		Shared<IndexBuffer> ebo = IndexBuffer::Create(indices, sizeof(indices));
 		vao->SetIndexBuffer(ebo);
 	}
 
@@ -105,8 +105,8 @@ public:
 	}
 
 private:
-	std::shared_ptr<Shader> shader;
-	std::shared_ptr<VertexArray> vao;
+	Shared<Shader> shader;
+	Shared<VertexArray> vao;
 
 	OrthographicCamera camera;
 };
@@ -114,7 +114,8 @@ private:
 class Playground : public Application
 {
 public:
-	Playground()
+	Playground() :
+		Application()
 	{
 		PushLayer(new ExampleLayer());
 	}
