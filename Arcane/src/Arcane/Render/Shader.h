@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arcane/Core/Core.h"
+#include "Arcane/Core/Base.h"
 
 #include <string>
 

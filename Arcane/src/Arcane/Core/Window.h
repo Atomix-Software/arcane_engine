@@ -2,7 +2,7 @@
 
 #include <arcpch.h>
 
-#include "Arcane/Core/Core.h"
+#include "Arcane/Core/Base.h"
 #include "Arcane/Events/Event.h"
 
 namespace Arcane
