@@ -8,7 +8,7 @@ class ExampleLayer : public Layer
 {
 public:
 	ExampleLayer() :
-		Layer("Example"), camera(-1.6f, 1.5f, -0.9f, 0.9f) {}
+		Layer("Example"), camera(-1.6f, 1.6f, -0.9f, 0.9f) {}
 
 	virtual void OnAttach() override
 	{

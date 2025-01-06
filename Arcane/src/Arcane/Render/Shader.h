@@ -18,6 +18,7 @@ namespace Arcane
 
 		void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 
+		bool operator==(Shader& other) { return m_RendererId == other.m_RendererId; }
 	private:
 		uint32_t m_RendererId;
 	};
