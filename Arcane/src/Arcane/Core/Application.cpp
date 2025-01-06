@@ -10,12 +10,12 @@ namespace Arcane
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application()
+	Application::Application(WindowProps winProps)
 	{
 		ARC_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = Unique<Window>(Window::Create());
+		m_Window = Unique<Window>(Window::Create(winProps));
 		m_Window->SetEventCallback(ARC_BIND_EVENT_FN(Application::OnEvent));
 
 		m_ImGuiLayer = new ImGuiLayer();

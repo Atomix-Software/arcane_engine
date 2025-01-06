@@ -25,6 +25,7 @@ namespace Arcane
 		virtual void UploadUniformFloat3(const std::string& name, const glm::vec3& value) const override;
 		virtual void UploadUniformFloat4(const std::string& name, const glm::vec4& value) const override;
 
+		virtual void UploadUniformMat3(const std::string& name, const glm::mat3& value) const override;
 		virtual void UploadUniformMat4(const std::string& name, const glm::mat4& value) const override;
 
 		inline virtual bool operator==(Shader& other) override { return m_RendererId == static_cast<OpenGLShader&>(other).m_RendererId; }

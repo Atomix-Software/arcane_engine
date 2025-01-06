@@ -126,8 +126,8 @@ private:
 class Playground : public Application
 {
 public:
-	Playground() :
-		Application()
+	Playground(const WindowProps& props) :
+		Application(props)
 	{
 		PushLayer(new ExampleLayer());
 	}
@@ -142,5 +142,5 @@ public:
 
 Application* Arcane::CreateApplication()
 {
-	return new Playground();
+	return new Playground({"Playground App"});
 }

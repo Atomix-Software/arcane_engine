@@ -23,6 +23,9 @@ namespace Arcane
 		case ShaderDataType::Mat4:	 return GL_FLOAT;
 		case ShaderDataType::Bool:	 return GL_BOOL;
 		}
+
+		ARC_CORE_ASSERT(false, "Unknown Data Type!");
+		return GL_NONE;
 	}
 
 	OpenGLVertexArray::OpenGLVertexArray()

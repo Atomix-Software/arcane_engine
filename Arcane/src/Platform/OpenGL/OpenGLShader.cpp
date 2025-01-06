@@ -152,6 +152,12 @@ namespace Arcane
         glUniform4f(location, value.x, value.y, value.z, value.w);
     }
 
+    void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& value) const
+    {
+        GLint location = glGetUniformLocation(m_RendererId, name.c_str());
+        glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
+    }
+
     void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& value) const
     {
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());

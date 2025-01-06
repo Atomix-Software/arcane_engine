@@ -17,7 +17,7 @@ namespace Arcane
 	class ARC_API Application
 	{
 	public:
-		Application();
+		Application(WindowProps winProps = WindowProps());
 		virtual ~Application();
 
 		void Run();
