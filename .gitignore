@@ -14,3 +14,8 @@ bin-int/
 # ImGui Generated Files
 imgui.ini
 imgui*.ini
+
+# Log Files
+.log
+Arcane.log
+Arcane*.log
