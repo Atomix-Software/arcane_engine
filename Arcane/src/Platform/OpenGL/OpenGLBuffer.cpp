@@ -10,6 +10,13 @@ namespace Arcane
 	* Vertex buffer
 	*/
 
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+	{
+		glCreateBuffers(1, &m_RendererId);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
+
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 	{
 		glCreateBuffers(1, &m_RendererId);

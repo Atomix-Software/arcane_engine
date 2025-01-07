@@ -12,9 +12,9 @@ namespace Arcane
 			s_RenderAPI->Init();
 		}
 
-		inline static void Clear()
+		inline static void Clear(bool clearDepth)
 		{
-			s_RenderAPI->Clear();
+			s_RenderAPI->Clear(clearDepth);
 		}
 
 		inline static void SetClearColor(const glm::vec4& color)

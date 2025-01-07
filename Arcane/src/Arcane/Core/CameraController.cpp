@@ -68,7 +68,7 @@ namespace Arcane
 
 	bool OrthoCameraController::OnMouseScrolled(MouseScrolledEvent& event)
 	{
-		m_Camera->SetZoom(m_Camera->GetZoom() - event.GetYOffset() * 0.05f);
+		m_Camera->SetZoom(m_Camera->GetZoom() - event.GetYOffset() * 0.07f);
 
 		float zoom = m_Camera->GetZoom();
 		m_Camera->SetProjection(-m_AspectRatio * zoom, m_AspectRatio * zoom, -zoom, zoom);

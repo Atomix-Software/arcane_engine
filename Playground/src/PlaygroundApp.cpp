@@ -1,14 +1,17 @@
 #include <Arcane.h>
+#include <Arcane/Core/EntryPoint.h>
+
+#include "Layer2D.h"
 
 #include <imgui.h>
 
 using namespace Arcane;
 
-class ExampleLayer : public Layer
+class LayerTest : public Layer
 {
 public:
-	ExampleLayer(int width, int height) :
-		Layer("Example")
+	LayerTest(int width, int height) :
+		Layer("Test")
 	{
 		float aspectRatio = (float) width / (float) height;
 		camControl = new OrthoCameraController(aspectRatio);
@@ -92,7 +95,8 @@ public:
 	Playground(const WindowProps& props) :
 		Application(props)
 	{
-		PushLayer(new ExampleLayer(GetWindow()->GetWidth(), GetWindow()->GetHeight()));
+		//PushLayer(new LayerTest(GetWindow()->GetWidth(), GetWindow()->GetHeight()));
+		PushLayer(new Layer2D);
 	}
 
 	~Playground()

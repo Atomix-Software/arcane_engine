@@ -171,20 +171,52 @@ namespace Arcane
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
-        DrawQuad({ position.x, position.y, 0.0f }, size, s_Data->WhiteTexture, color);
+        DrawQuad(position, size, s_Data->WhiteTexture, { color });
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Shared<Texture2D>& texture, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Shared<Texture2D>& texture, const TextureProps& props)
     {
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, props);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Shared<Texture2D>& texture, const glm::vec4& color)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Shared<Texture2D>& texture, const TextureProps& props)
     {
-        s_Data->TextureShader->SetFloat4("u_Color", color);
+        s_Data->TextureShader->SetFloat4("u_Color", props.Color);
+        s_Data->TextureShader->SetFloat("u_TileFactor", props.TileFactor);
         texture->Bind();
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data->TextureShader->SetMat4("u_Model", transform);
+
+        s_Data->VertexArray->Bind();
+        RenderCMD::DrawIndexed(s_Data->VertexArray);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0 }, size, rotation, color);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+    {
+        DrawRotatedQuad(position, size, rotation, s_Data->WhiteTexture, { color });
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Shared<Texture2D>& texture, const TextureProps& props)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0 }, size, rotation, texture, props);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Shared<Texture2D>& texture, const TextureProps& props)
+    {
+        s_Data->TextureShader->SetFloat4("u_Color", props.Color);
+        s_Data->TextureShader->SetFloat("u_TileFactor", props.TileFactor);
+        texture->Bind();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         s_Data->TextureShader->SetMat4("u_Model", transform);

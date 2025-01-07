@@ -17,9 +17,12 @@ namespace Arcane
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	void OpenGLRenderAPI::Clear()
+	void OpenGLRenderAPI::Clear(bool clearDepth)
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLenum clearMask = GL_COLOR_BUFFER_BIT;
+		if (clearDepth) clearMask |= GL_DEPTH_BUFFER_BIT;
+
+		glClear(clearMask);
 	}
 
 	void OpenGLRenderAPI::SetClearColor(const glm::vec4& color)
