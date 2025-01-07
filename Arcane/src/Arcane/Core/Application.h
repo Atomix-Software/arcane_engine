@@ -27,6 +27,8 @@ namespace Arcane
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
 
+		inline void PushEvent(const Event& event) { m_Window->PushEvent((Event&)event); }
+
 		inline static Application& Get() { return *s_Instance; }
 		inline const Unique<Window>& GetWindow() const { return m_Window; }
 	private:

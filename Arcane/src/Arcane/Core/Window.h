@@ -29,6 +29,8 @@ namespace Arcane
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
 
+		virtual void PushEvent(Event& event) = 0;
+
 		// Window Attributes
 		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enabled) = 0;
@@ -36,6 +38,6 @@ namespace Arcane
 
 		virtual void* GetNativeWindow() const = 0;
 
-		static Window* Create(const WindowProps& props = WindowProps());
+		static Unique<Window> Create(const WindowProps& props = WindowProps());
 	};
 }

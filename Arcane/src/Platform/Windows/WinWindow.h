@@ -18,6 +18,8 @@ namespace Arcane
 		virtual inline unsigned int GetWidth() const override { return m_Data.Width; }
 		virtual inline unsigned int GetHeight() const override { return m_Data.Height; }
 
+		virtual inline void PushEvent(Event& event) override { m_Data.EventCallback(event); }
+
 		// Window Attributes
 		virtual inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
 		virtual void SetVSync(bool enabled) override;
@@ -30,9 +32,6 @@ namespace Arcane
 		virtual void Shutdown();
 
 	private:
-		GLFWwindow* m_Window;
-		GraphicsContext* m_Context;
-
 		struct WindowData
 		{
 			std::string Title;
@@ -41,6 +40,9 @@ namespace Arcane
 
 			EventCallbackFn EventCallback;
 		};
+
+		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		WindowData m_Data;
 	};

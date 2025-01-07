@@ -7,6 +7,10 @@ namespace Arcane
 	class RenderCMD
 	{
 	public:
+		inline static void Init()
+		{
+			s_RenderAPI->Init();
+		}
 
 		inline static void SetClearColor(const glm::vec4& color)
 		{

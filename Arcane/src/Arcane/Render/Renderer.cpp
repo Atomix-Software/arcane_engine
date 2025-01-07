@@ -6,6 +6,11 @@ namespace Arcane
 {
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData();
 
+    void Renderer::Init()
+    {
+        RenderCMD::Init();
+    }
+
     void Renderer::BeginScene(OrthographicCamera& camera)
     {
         ARC_CORE_ASSERT(!m_SceneData->Rendering, "Must call EndScene before BeginScene!");
@@ -25,12 +30,24 @@ namespace Arcane
         {
             shader->Bind();
             shader->UploadUniformMat4("u_ProjectionView", m_SceneData->ProjectionView);
-
             const auto& objects = m_SceneData->Objects[shader];
-            for (const auto& [vao, transform] : objects)
+            for (const auto& [vao, data] : objects)
             {
+                int textureCount = 0;
+                if (data->Texture != nullptr)
+                {
+                    shader->UploadUniformInt("u_Texture", textureCount);
+                    data->Texture->Bind(textureCount);
+                    textureCount++;
+                }
+                else
+                {
+                    shader->UploadUniformFloat3("u_Color", data->Color);
+                }
+
+                shader->UploadUniformMat4("u_Model", data->Transform);
+
                 vao->Bind();
-                shader->UploadUniformMat4("u_Model", transform);
                 RenderCMD::DrawIndexed(vao);
             }
         }
@@ -40,16 +57,16 @@ namespace Arcane
         m_SceneData->Rendering = false;
     }
 
-    void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const glm::vec3 position, float rotation, float scale)
+    void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const Shared<Texture2D>& texture, const glm::vec3 position, const glm::vec3 color, float rotation, float scale)
     {
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
             glm::rotate(glm::mat4(1.0), glm::radians(rotation), glm::vec3(0, 0, 1)) *
             glm::scale(glm::mat4(1.0), glm::vec3(scale));
 
-        Submit(shader, vao, transform);
+        Submit(shader, vao, texture, color, transform);
     }
 
-    void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const glm::mat4& transform)
+    void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const Shared<Texture2D>& texture, const glm::vec3 color, const glm::mat4& transform)
     {
         ARC_CORE_ASSERT(m_SceneData->Rendering, "Must call BeginScene before Submit!");
 
@@ -60,8 +77,13 @@ namespace Arcane
             m_SceneData->ShaderCount++;
         }
 
+        RenderData* data = new RenderData();
+        data->Texture = texture;
+        data->Transform = transform;
+        data->Color = color;
+
         // Associate the VAO and transform with the shader
-        m_SceneData->Objects[shader].emplace_back(vao, transform);
+        m_SceneData->Objects[shader].emplace_back(vao, data);
         m_SceneData->ObjectCount++;
     }
 }

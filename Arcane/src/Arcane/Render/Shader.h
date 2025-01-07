@@ -31,8 +31,29 @@ namespace Arcane
 		virtual void UploadUniformMat3(const std::string& name, const glm::mat3& value) const = 0;
 		virtual void UploadUniformMat4(const std::string& name, const glm::mat4& value) const = 0;
 
+		virtual const std::string GetName() const = 0;
+
 		virtual bool operator==(Shader& other) = 0;
 
-		static Shared<Shader> Create(const std::string& vertSrc, const std::string& fragSrc);
+		static Shared<Shader> Create(const std::string& shaderFile);
+		static Shared<Shader> Create(const std::string& name, const std::string& vertSrc, const std::string& fragSrc);
+	};
+
+	class ShaderLibrary
+	{
+	public:
+		void Add(const Shared<Shader>& shader);
+		void Add(const std::string& name, const Shared<Shader>& shader);
+
+		Shared<Shader> Load(const std::string& filePath);
+		Shared<Shader> Load(const std::string& name, const std::string& filePath);
+
+		Shared<Shader> Get(const std::string& name);
+
+		bool Exists(const std::string& name) const;
+
+	private:
+		std::unordered_map<std::string, Shared<Shader>> m_Shaders;
+
 	};
 }
