@@ -24,6 +24,3 @@
 #include "Arcane/Render/VertexArray.h"
 
 #include "Arcane/Render/Camera.h"
-
-/* Entry Point */
-#include "Arcane/Core/EntryPoint.h"

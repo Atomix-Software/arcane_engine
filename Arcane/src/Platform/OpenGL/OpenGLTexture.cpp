@@ -1,14 +1,26 @@
 #include <arcpch.h>
 
-#include "OpenGLTexture.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
 
-#include <glad/glad.h>
 #include <stb_image.h>
 
 namespace Arcane
 {
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) :
+		m_Width(width), m_Height(height), m_InternalFormat(GL_RGBA8), m_DataFormat(GL_RGBA)
+	{
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path) :
-		m_Path(path)
+		m_Path(path), m_InternalFormat(GL_RGBA8), m_DataFormat(GL_RGBA)
 	{
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(true);
@@ -18,15 +30,18 @@ namespace Arcane
 		m_Width = width;
 		m_Height = height;
 
+		m_InternalFormat = channels > 3 ? GL_RGBA8 : GL_RGB8;
+		m_DataFormat = channels > 3 ? GL_RGBA : GL_RGB;
+
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		int channelBit = channels > 3 ? GL_RGBA8 : GL_RGB8;
-		glTextureStorage2D(m_RendererID, 1, channelBit, m_Width, m_Height);
+		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-		channelBit = channels > 3 ? GL_RGBA : GL_RGB;
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, channelBit, GL_UNSIGNED_BYTE, data);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 
 		stbi_image_free(data);
 	}
@@ -40,5 +55,10 @@ namespace Arcane
 	{
 		glActiveTexture(slot);
 		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+	}
+
+	void OpenGLTexture2D::SetData(void* data, uint32_t size)
+	{
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 	}
 }

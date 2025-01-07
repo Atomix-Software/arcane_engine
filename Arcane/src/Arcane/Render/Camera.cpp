@@ -1,6 +1,6 @@
 #include <arcpch.h>
 
-#include "Camera.h"
+#include "Arcane/Render/Camera.h"
 
 namespace Arcane
 {

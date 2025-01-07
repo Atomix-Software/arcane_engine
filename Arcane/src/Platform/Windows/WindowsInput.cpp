@@ -1,6 +1,6 @@
 #include <arcpch.h>
 
-#include "WindowsInput.h"
+#include "Platform/Windows/WindowsInput.h"
 
 #include "Arcane/Core/Application.h"
 

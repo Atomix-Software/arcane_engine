@@ -16,8 +16,8 @@ namespace Arcane
 		inline const glm::mat4& GetView() const { return m_View; }
 		inline const glm::mat4& GetProjection() const { return m_Projection; }
 
-		inline const glm::mat4& GetProjectionView() const { return GetProjection() * GetView(); }
-		inline const glm::mat4& GetViewProjection() const { return GetView() * GetProjection(); }
+		inline const glm::mat4 GetProjectionView() const { return m_Projection * m_View; }
+		inline const glm::mat4 GetViewProjection() const { return m_View * m_Projection; }
 
 		inline const glm::vec3& GetPosition() const { return m_Position; }
 		inline const glm::vec3& GetRotation() const { return m_Rotation; }

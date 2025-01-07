@@ -1,6 +1,6 @@
 #include<arcpch.h>
 
-#include "CameraController.h"
+#include "Arcane/Core/CameraController.h"
 
 #include "Arcane/Core/Input.h"
 #include "Arcane/Core/KeyCodes.h"
@@ -20,16 +20,28 @@ namespace Arcane
 		m_Rotation = m_Camera->GetZRotation();
 
 		if (Input::IsKeyPressed(Key::W))
-			m_Position.y += m_Speed * ts;
+		{
+			m_Position.x += -sin(glm::radians(m_Camera->GetZRotation())) * m_Speed * ts;
+			m_Position.y += cos(glm::radians(m_Camera->GetZRotation())) * m_Speed * ts;
+		}
 		else if (Input::IsKeyPressed(Key::S))
-			m_Position.y -= m_Speed * ts;
+		{
+			m_Position.x -= -sin(glm::radians(m_Camera->GetZRotation())) * m_Speed * ts;
+			m_Position.y -= cos(glm::radians(m_Camera->GetZRotation())) * m_Speed * ts;
+		}
 
 		if (Input::IsKeyPressed(Key::A))
-			m_Position.x -= m_Speed * ts;
+		{
+			m_Position.x -= cos(glm::radians(m_Camera->GetZRotation())) * m_Speed * ts;
+			m_Position.y -= sin(glm::radians(m_Camera->GetZRotation())) * m_Speed * ts;
+		}
 		else if (Input::IsKeyPressed(Key::D))
-			m_Position.x += m_Speed * ts;
+		{
+			m_Position.x += cos(glm::radians(m_Camera->GetZRotation())) * m_Speed * ts;
+			m_Position.y += sin(glm::radians(m_Camera->GetZRotation())) * m_Speed * ts;
+		}
 
-		float rotationSpeed = m_Speed * 10.0f;
+		float rotationSpeed = m_Speed * 20.0f;
 		if (Input::IsKeyPressed(Key::Q))
 			m_Rotation += rotationSpeed * ts;
 		else if (Input::IsKeyPressed(Key::E))
@@ -49,7 +61,7 @@ namespace Arcane
 	bool OrthoCameraController::OnWindowResized(WindowResizeEvent& event)
 	{
 		float zoom = m_Camera->GetZoom();
-		m_AspectRatio = (float) event.GetWidth() / (float) event.GetHeight();
+		m_AspectRatio = (float)event.GetWidth() / (float)event.GetHeight();
 		m_Camera->SetProjection(-m_AspectRatio * zoom, m_AspectRatio * zoom, -zoom, zoom);
 		return false;
 	}

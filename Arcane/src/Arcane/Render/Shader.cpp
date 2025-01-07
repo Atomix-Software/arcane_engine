@@ -1,6 +1,6 @@
 #include <arcpch.h>
 
-#include "Shader.h"
+#include "Arcane/Render/Shader.h"
 
 #include "Arcane/Render/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"

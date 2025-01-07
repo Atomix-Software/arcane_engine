@@ -1,6 +1,6 @@
 #include <arcpch.h>
 
-#include "VertexArray.h"
+#include "Arcane/Render/VertexArray.h"
 
 #include "Arcane/Render/Renderer.h"
 #include "Platform/OpenGL/OpenGLVertexArray.h"

@@ -1,6 +1,6 @@
 #include <arcpch.h>
 
-#include "OpenGLVertexArray.h"
+#include "Platform/OpenGL/OpenGLVertexArray.h"
 
 #include <glad/glad.h>
 
@@ -62,7 +62,7 @@ namespace Arcane
 				element.GetComponentCount(), ShaderTypeToGLType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
 				layout.GetStride(),
-				(const void*)element.Offset);
+				(const void*)((uint64_t) element.Offset));
 			index++;
 		}
 

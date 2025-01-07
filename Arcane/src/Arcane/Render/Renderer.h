@@ -33,9 +33,12 @@ namespace Arcane
 
 	public:
 		static void Init();
+		static void Shutdown();
 
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
+
+		static void ResizeViewport(uint32_t width, uint32_t height);
 
 		static void Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const Shared<Texture2D>& texture, const glm::vec3 position, const glm::vec3 color = glm::vec3(1.0f), float rotation = 0.0f, float scale = 1.0f);
 		static void Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const Shared<Texture2D>& texture, const glm::vec3 color = glm::vec3(1.0f), const glm::mat4& transform = glm::mat4(1.0));
@@ -47,5 +50,21 @@ namespace Arcane
 	private:
 		static SceneData* m_SceneData;
 
+	};
+
+	class Renderer2D
+	{
+	public:
+		static void Init();
+		static void Shutdown();
+
+		static void BeginScene(OrthographicCamera& camera);
+		static void EndScene();
+
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Shared<Texture2D>& texture, const glm::vec4& color = glm::vec4(1));
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Shared<Texture2D>& texture, const glm::vec4& color = glm::vec4(1));
 	};
 }

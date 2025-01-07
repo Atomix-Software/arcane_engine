@@ -1,7 +1,7 @@
 #include <arcpch.h>
 
-#include "Buffer.h"
-#include "Renderer.h"
+#include "Arcane/Render/Buffer.h"
+#include "Arcane/Render/Renderer.h"
 
 #include "Platform/OpenGL/OpenGLBuffer.h"
 

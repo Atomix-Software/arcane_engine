@@ -26,7 +26,7 @@ namespace Arcane
 
 	Application::~Application()
 	{
-
+		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
@@ -43,12 +43,12 @@ namespace Arcane
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(ARC_BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(ARC_BIND_EVENT_FN(Application::OnWindowResized));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
 			(*--it)->OnEvent(e);
-			if (e.Handled)
-				break;
+			if (e.Handled) break;
 		}
 	}
 
@@ -58,19 +58,33 @@ namespace Arcane
 		return false;
 	}
 
+	bool Application::OnWindowResized(WindowResizeEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		
+		m_Minimized = false;
+		Renderer::ResizeViewport(e.GetWidth(), e.GetHeight());
+
+		return false;
+	}
+
 	void Application::Run()
 	{
 		while (m_Running)
 		{
-			RenderCMD::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-			RenderCMD::Clear();
-
-			float time = (float) glfwGetTime();
+			float time = (float)glfwGetTime();
 			Timestep timeStep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			for (auto layer : m_LayerStack)
-				layer->OnUpdate(timeStep);
+			if (!m_Minimized)
+			{
+				for (auto layer : m_LayerStack)
+					layer->OnUpdate(timeStep);
+			}
 
 			m_ImGuiLayer->Begin();
 			for (auto layer : m_LayerStack)

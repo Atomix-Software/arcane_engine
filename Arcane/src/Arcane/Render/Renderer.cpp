@@ -1,14 +1,23 @@
 #include <arcpch.h>
 
-#include "Renderer.h"
+#include "Arcane/Render/Renderer.h"
+
+#include <glad/glad.h>
 
 namespace Arcane
 {
+    /* 3D Renderer */
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData();
 
     void Renderer::Init()
     {
         RenderCMD::Init();
+        Renderer2D::Init();
+    }
+
+    void Renderer::Shutdown()
+    {
+        Renderer2D::Shutdown();
     }
 
     void Renderer::BeginScene(OrthographicCamera& camera)
@@ -18,7 +27,7 @@ namespace Arcane
         m_SceneData->ShaderCount = 0;
         m_SceneData->ObjectCount = 0;
 
-        m_SceneData->ProjectionView = camera.GetProjection() * camera.GetView();
+        m_SceneData->ProjectionView = camera.GetProjectionView();
         m_SceneData->Rendering = true;
     }
 
@@ -29,23 +38,23 @@ namespace Arcane
         for (auto& shader : m_SceneData->Shaders)
         {
             shader->Bind();
-            shader->UploadUniformMat4("u_ProjectionView", m_SceneData->ProjectionView);
+            shader->SetMat4("u_ProjectionView", m_SceneData->ProjectionView);
             const auto& objects = m_SceneData->Objects[shader];
             for (const auto& [vao, data] : objects)
             {
                 int textureCount = 0;
                 if (data->Texture != nullptr)
                 {
-                    shader->UploadUniformInt("u_Texture", textureCount);
+                    shader->SetInt("u_Texture", textureCount);
                     data->Texture->Bind(textureCount);
                     textureCount++;
                 }
                 else
                 {
-                    shader->UploadUniformFloat3("u_Color", data->Color);
+                    shader->SetFloat3("u_Color", data->Color);
                 }
 
-                shader->UploadUniformMat4("u_Model", data->Transform);
+                shader->SetMat4("u_Model", data->Transform);
 
                 vao->Bind();
                 RenderCMD::DrawIndexed(vao);
@@ -55,6 +64,11 @@ namespace Arcane
         m_SceneData->Shaders.clear();
         m_SceneData->Objects.clear();
         m_SceneData->Rendering = false;
+    }
+
+    void Renderer::ResizeViewport(uint32_t width, uint32_t height)
+    {
+        RenderCMD::SetViewport(0, 0, width, height);
     }
 
     void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const Shared<Texture2D>& texture, const glm::vec3 position, const glm::vec3 color, float rotation, float scale)
@@ -86,4 +100,97 @@ namespace Arcane
         m_SceneData->Objects[shader].emplace_back(vao, data);
         m_SceneData->ObjectCount++;
     }
+
+    /* 2D Renderer */
+
+    struct RenderData2D
+    {
+        Shared<VertexArray> VertexArray;
+        Shared<Shader> TextureShader;
+        Shared<Texture2D> WhiteTexture;
+    };
+
+    static RenderData2D* s_Data;
+
+    void Renderer2D::Init()
+    {
+        s_Data = new RenderData2D();
+        s_Data->VertexArray = VertexArray::Create();
+
+        float vertices[] = {
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+             0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+             0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
+        };
+
+        Shared<VertexBuffer> vbo = VertexBuffer::Create(vertices, sizeof(vertices));
+        vbo->SetLayout({
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float2, "a_TexCoord" },
+        });
+
+        s_Data->VertexArray->AddVertexBuffer(vbo);
+
+        uint32_t indices[] = {
+            0, 1, 2,
+            2, 3, 0
+        };
+
+        Shared<IndexBuffer> ebo = IndexBuffer::Create(indices, sizeof(indices));
+        s_Data->VertexArray->SetIndexBuffer(ebo);
+
+        s_Data->WhiteTexture = Texture2D::Create(1, 1);
+        uint32_t whiteTextureData = 0xffffffff;
+        s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
+
+        s_Data->TextureShader = Shader::Create("assets/shaders/Texture.glsl");
+        s_Data->TextureShader->SetInt("u_Texture", 0);
+    }
+
+    void Renderer2D::Shutdown()
+    {
+
+    }
+
+    void Renderer2D::BeginScene(OrthographicCamera& camera)
+    {
+        s_Data->TextureShader->Bind();
+        s_Data->TextureShader->SetMat4("u_ProjectionView", camera.GetProjectionView());
+    }
+
+    void Renderer2D::EndScene()
+    {
+
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+    {
+        DrawQuad({ position.x, position.y, 0.0f }, size, color);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+    {
+        DrawQuad({ position.x, position.y, 0.0f }, size, s_Data->WhiteTexture, color);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Shared<Texture2D>& texture, const glm::vec4& color)
+    {
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, color);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Shared<Texture2D>& texture, const glm::vec4& color)
+    {
+        s_Data->TextureShader->SetFloat4("u_Color", color);
+        texture->Bind();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data->TextureShader->SetMat4("u_Model", transform);
+
+        s_Data->VertexArray->Bind();
+        RenderCMD::DrawIndexed(s_Data->VertexArray);
+    }
+
 }
