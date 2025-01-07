@@ -7,11 +7,11 @@
 
 namespace Arcane
 {
-	class WinWindow : public Window
+	class OpenGLWindow : public Window
 	{
 	public:
-		WinWindow(const WindowProps& props);
-		virtual ~WinWindow();
+		OpenGLWindow(const WindowProps& props);
+		virtual ~OpenGLWindow();
 
 		virtual void OnUpdate() override;
 

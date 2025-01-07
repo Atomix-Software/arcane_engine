@@ -68,9 +68,9 @@ namespace Arcane
         ImGui::ShowDemoWindow(&show);
 
         ImGui::Begin("Renderer Info");
-        ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
+        ImGui::Text("Vendor: %s",   glGetString(GL_VENDOR));
         ImGui::Text("Renderer: %s", glGetString(GL_RENDERER));
-        ImGui::Text("OpenGL Version: %s", glGetString(GL_VERSION));
+        ImGui::Text("OpenGL: %s",   glGetString(GL_VERSION));
         ImGui::End();
     }
 

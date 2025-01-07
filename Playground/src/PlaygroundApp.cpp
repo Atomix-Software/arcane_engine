@@ -7,50 +7,35 @@ using namespace Arcane;
 class ExampleLayer : public Layer
 {
 public:
-	ExampleLayer() :
-		Layer("Example"), camera(-1.6f, 1.6f, -0.9f, 0.9f) {}
+	ExampleLayer(int width, int height) :
+		Layer("Example")
+	{
+		float aspectRatio = (float) width / (float) height;
+		camControl = new OrthoCameraController(aspectRatio);
+	}
 
 	virtual void OnAttach() override
 	{
-		std::string vertSrc = R"(
-			#version 410 core
+		// Load Files
+		shaderLib.Load("assets/shaders/Texture.glsl");
+		shaderLib.Load("assets/shaders/Flat.glsl");
 
-			layout(location=0) in vec3 a_Position;
+		texture = Texture2D::Create("assets/textures/whoa.png");
 
-			uniform mat4 u_ProjectionView;
-			uniform mat4 u_Model;
-			
-			void main()
-			{
-				gl_Position = u_ProjectionView * u_Model * vec4(a_Position, 1.0);
-			}
-		)";
-
-		std::string fragSrc = R"(
-			#version 410 core
-			
-			layout(location=0) out vec4 a_FragColor;
-
-			void main()
-			{
-				a_FragColor = vec4(1, 0, 0, 1);
-			}
-		)";
-
-		shader = Shader::Create(vertSrc, fragSrc);
-
+		// Setup Code
 		vao = VertexArray::Create();
 
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
 		Shared<VertexBuffer> vbo = VertexBuffer::Create(vertices, sizeof(vertices));
 		vbo->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" }
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float2, "a_TexCoord" }
 		});
 
 		vao->AddVertexBuffer(vbo);
@@ -66,31 +51,15 @@ public:
 
 	virtual void OnUpdate(Timestep ts) override
 	{
-		glm::vec3 camPos = camera.GetPosition();
-		float rotation = camera.GetRotation();
-		float speed = 2.5f * ts;
+		camControl->OnUpdate(ts);
 
-		if (Input::IsKeyPressed(Key::W))
-			camPos.y += speed;
-		else if (Input::IsKeyPressed(Key::S))
-			camPos.y -= speed;
+		Renderer::BeginScene(*camControl->GetCamera());
 
-		if (Input::IsKeyPressed(Key::A))
-			camPos.x -= speed;
-		else if (Input::IsKeyPressed(Key::D))
-			camPos.x += speed;
+		Renderer::Submit(shaderLib.Get("Flat"), vao, nullptr,    {  0.75f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f }, 0.0f, 0.75f);
+		Renderer::Submit(shaderLib.Get("Texture"), vao, texture, {  0.75f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f }, 0.0f, 0.75f);
+		Renderer::Submit(shaderLib.Get("Flat"), vao, nullptr,    { -0.75f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, 0.0f, 0.75f);
+		Renderer::Submit(shaderLib.Get("Texture"), vao, texture, { -0.75f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, 0.0f, 0.75f);
 
-		if (Input::IsKeyPressed(Key::Q))
-			rotation += speed * 15.f;
-		else if (Input::IsKeyPressed(Key::E))
-			rotation -= speed * 15.f;
-
-		camera.SetPosition(camPos);
-		camera.SetRotation(rotation);
-
-		Renderer::BeginScene(camera);
-		Renderer::Submit(shader, vao, {  0.75f, 0, 0 });
-		Renderer::Submit(shader, vao, { -0.75f, 0, 0 });
 		Renderer::EndScene();
 	}
 
@@ -106,21 +75,15 @@ public:
 
 	virtual void OnEvent(Event& event)
 	{
-		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<KeyPressedEvent>(ARC_BIND_EVENT_FN(ExampleLayer::OnKeyPressed));
-	}
-
-	bool OnKeyPressed(KeyPressedEvent& event)
-	{
-
-		return false;
+		camControl->OnEvent(event);
 	}
 
 private:
-	Shared<Shader> shader;
+	Shared<Texture2D> texture;
 	Shared<VertexArray> vao;
 
-	OrthographicCamera camera;
+	ShaderLibrary shaderLib;
+	OrthoCameraController* camControl;
 };
 
 class Playground : public Application
@@ -129,7 +92,7 @@ public:
 	Playground(const WindowProps& props) :
 		Application(props)
 	{
-		PushLayer(new ExampleLayer());
+		PushLayer(new ExampleLayer(GetWindow()->GetWidth(), GetWindow()->GetHeight()));
 	}
 
 	~Playground()

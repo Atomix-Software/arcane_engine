@@ -5,8 +5,6 @@
 #include "Arcane/Core/Input.h"
 #include "Arcane/Core/KeyCodes.h"
 
-#include <glad/glad.h>
-
 namespace Arcane
 {
 	OrthoCameraController::OrthoCameraController(float aspectRatio, float zoom) :
@@ -50,8 +48,6 @@ namespace Arcane
 
 	bool OrthoCameraController::OnWindowResized(WindowResizeEvent& event)
 	{
-		glViewport(0, 0, event.GetWidth(), event.GetHeight());
-
 		float zoom = m_Camera->GetZoom();
 		m_AspectRatio = (float) event.GetWidth() / (float) event.GetHeight();
 		m_Camera->SetProjection(-m_AspectRatio * zoom, m_AspectRatio * zoom, -zoom, zoom);

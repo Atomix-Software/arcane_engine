@@ -1,6 +1,6 @@
 #include <arcpch.h>
 
-#include "Platform/Windows/WinWindow.h"
+#include "Platform/OpenGL/OpenGLWindow.h"
 
 #include "Arcane/Events/ApplicationEvent.h"
 #include "Arcane/Events/KeyEvent.h"
@@ -20,22 +20,17 @@ namespace Arcane
 		ARC_CORE_ERROR("GLFW Error [{0}]: {1}", error, description);
 	}
 
-	Unique<Window> Window::Create(const WindowProps& props)
-	{
-		return CreateUnique<WinWindow>(props);
-	}
-
-	WinWindow::WinWindow(const WindowProps& props)
+	OpenGLWindow::OpenGLWindow(const WindowProps& props)
 	{
 		Init(props);
 	}
 
-	WinWindow::~WinWindow()
+	OpenGLWindow::~OpenGLWindow()
 	{
 		Shutdown();
 	}
 
-	void WinWindow::Init(const WindowProps& props)
+	void OpenGLWindow::Init(const WindowProps& props)
 	{
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
@@ -62,9 +57,11 @@ namespace Arcane
 		SetVSync(true);
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 
-		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
+		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
-				WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
+				glViewport(0, 0, width, height);
+
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 				data.Width = width;
 				data.Height = height;
 
@@ -72,7 +69,7 @@ namespace Arcane
 				data.EventCallback(event);
 			});
 
-		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) 
+		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 				WindowCloseEvent event;
@@ -85,26 +82,26 @@ namespace Arcane
 
 				switch (action)
 				{
-					case GLFW_PRESS:
-					{
-						KeyPressedEvent event(key, 0);
-						data.EventCallback(event);
-						break;
-					}
+				case GLFW_PRESS:
+				{
+					KeyPressedEvent event(key, 0);
+					data.EventCallback(event);
+					break;
+				}
 
-					case GLFW_RELEASE:
-					{
-						KeyReleasedEvent event(key);
-						data.EventCallback(event);
-						break;
-					}
+				case GLFW_RELEASE:
+				{
+					KeyReleasedEvent event(key);
+					data.EventCallback(event);
+					break;
+				}
 
-					case GLFW_REPEAT:
-					{
-						KeyPressedEvent event(key, 1);
-						data.EventCallback(event);
-						break;
-					}
+				case GLFW_REPEAT:
+				{
+					KeyPressedEvent event(key, 1);
+					data.EventCallback(event);
+					break;
+				}
 				}
 			});
 
@@ -121,19 +118,19 @@ namespace Arcane
 
 				switch (action)
 				{
-					case GLFW_PRESS:
-					{
-						MouseButtonPressedEvent event(button);
-						data.EventCallback(event);
-						break;
-					}
+				case GLFW_PRESS:
+				{
+					MouseButtonPressedEvent event(button);
+					data.EventCallback(event);
+					break;
+				}
 
-					case GLFW_RELEASE:
-					{
-						MouseButtonReleasedEvent event(button);
-						data.EventCallback(event);
-						break;
-					}
+				case GLFW_RELEASE:
+				{
+					MouseButtonReleasedEvent event(button);
+					data.EventCallback(event);
+					break;
+				}
 				}
 			});
 
@@ -152,18 +149,18 @@ namespace Arcane
 			});
 	}
 
-	void WinWindow::Shutdown()
+	void OpenGLWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
 	}
 
-	void WinWindow::OnUpdate()
+	void OpenGLWindow::OnUpdate()
 	{
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
 
-	void WinWindow::SetVSync(bool enabled)
+	void OpenGLWindow::SetVSync(bool enabled)
 	{
 		if (enabled)
 			glfwSwapInterval(1);
@@ -173,8 +170,9 @@ namespace Arcane
 		m_Data.VSync = enabled;
 	}
 
-	bool WinWindow::IsVSync() const
+	bool OpenGLWindow::IsVSync() const
 	{
 		return m_Data.VSync;
 	}
+
 }
