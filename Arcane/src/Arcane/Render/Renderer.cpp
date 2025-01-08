@@ -187,7 +187,7 @@ namespace Arcane
         uint32_t whiteTextureData = 0xffffffff;
         s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
 
-        int samplers[RenderData2D::Max_TextureSlots];
+        int* samplers = new int[RenderData2D::Max_TextureSlots];
         for (int i = 0; i < RenderData2D::Max_TextureSlots; ++i)
             samplers[i] = i;
 
@@ -270,6 +270,9 @@ namespace Arcane
     {
         ARC_PROFILE_FUNCTION();
 
+        constexpr size_t quadVertexCount = 4;
+        constexpr glm::vec2 texCoords[] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
+
         if (s_Data.QuadIndexCount >= RenderData2D::Max_Indices)
             FlushAndReset();
 
@@ -293,36 +296,17 @@ namespace Arcane
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
             glm::scale(glm::mat4(1.0), { size.x, size.y, 1.0f });
 
-        s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-        s_Data.QuadBufferPtr->Color = props.Color;
-        s_Data.QuadBufferPtr->TexCoord = { 0.0f, 0.0f };
-        s_Data.QuadBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
-        s_Data.QuadBufferPtr++;
-
-        s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-        s_Data.QuadBufferPtr->Color = props.Color;
-        s_Data.QuadBufferPtr->TexCoord = { 1.0f, 0.0f };
-        s_Data.QuadBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
-        s_Data.QuadBufferPtr++;
-
-        s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-        s_Data.QuadBufferPtr->Color = props.Color;
-        s_Data.QuadBufferPtr->TexCoord = { 1.0f, 1.0f };
-        s_Data.QuadBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
-        s_Data.QuadBufferPtr++;
-
-        s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-        s_Data.QuadBufferPtr->Color = props.Color;
-        s_Data.QuadBufferPtr->TexCoord = { 0.0f, 1.0f };
-        s_Data.QuadBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
-        s_Data.QuadBufferPtr++;
+        for (size_t i = 0; i < quadVertexCount; ++i)
+        {
+            s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadBufferPtr->Color = props.Color;
+            s_Data.QuadBufferPtr->TexCoord = texCoords[i];
+            s_Data.QuadBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
+            s_Data.QuadBufferPtr++;
+        }
 
         s_Data.QuadIndexCount += 6;
-
         s_Data.Stats.QuadCount++;
     }
 
@@ -344,6 +328,9 @@ namespace Arcane
     void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Shared<Texture2D>& texture, const TextureProps& props)
     {
         ARC_PROFILE_FUNCTION();
+
+        constexpr size_t quadVertexCount = 4;
+        constexpr glm::vec2 texCoords[] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
 
         if (s_Data.QuadIndexCount >= RenderData2D::Max_Indices)
             FlushAndReset();
@@ -369,36 +356,17 @@ namespace Arcane
             glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0, 0, 1 }) *
             glm::scale(glm::mat4(1.0), { size.x, size.y, 1.0f });
 
-        s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-        s_Data.QuadBufferPtr->Color = props.Color;
-        s_Data.QuadBufferPtr->TexCoord = { 0.0f, 0.0f };
-        s_Data.QuadBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
-        s_Data.QuadBufferPtr++;
-
-        s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-        s_Data.QuadBufferPtr->Color = props.Color;
-        s_Data.QuadBufferPtr->TexCoord = { 1.0f, 0.0f };
-        s_Data.QuadBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
-        s_Data.QuadBufferPtr++;
-
-        s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-        s_Data.QuadBufferPtr->Color = props.Color;
-        s_Data.QuadBufferPtr->TexCoord = { 1.0f, 1.0f };
-        s_Data.QuadBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
-        s_Data.QuadBufferPtr++;
-
-        s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-        s_Data.QuadBufferPtr->Color = props.Color;
-        s_Data.QuadBufferPtr->TexCoord = { 0.0f, 1.0f };
-        s_Data.QuadBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
-        s_Data.QuadBufferPtr++;
+        for (size_t i = 0; i < quadVertexCount; ++i)
+        {
+            s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadBufferPtr->Color = props.Color;
+            s_Data.QuadBufferPtr->TexCoord = texCoords[i];
+            s_Data.QuadBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
+            s_Data.QuadBufferPtr++;
+        }
 
         s_Data.QuadIndexCount += 6;
-
         s_Data.Stats.QuadCount++;
     }
 
