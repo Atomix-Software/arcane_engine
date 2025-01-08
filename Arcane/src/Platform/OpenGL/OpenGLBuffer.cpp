@@ -44,6 +44,13 @@ namespace Arcane
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
+	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+	{
+		ARC_PROFILE_FUNCTION();
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
+
 	/*
 	* Index buffer
 	*/

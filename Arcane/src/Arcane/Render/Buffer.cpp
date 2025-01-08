@@ -34,8 +34,8 @@ namespace Arcane
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RenderAPI::API::None: ARC_CORE_ASSERT(false, "RendererAPI::None is not supported!"); return nullptr;
-		case RenderAPI::API::OpenGL: return CreateShared<OpenGLIndexBuffer>(indices, count);
+			case RenderAPI::API::None: ARC_CORE_ASSERT(false, "RendererAPI::None is not supported!"); return nullptr;
+			case RenderAPI::API::OpenGL: return CreateShared<OpenGLIndexBuffer>(indices, count);
 		}
 
 		ARC_CORE_ASSERT(false, "Unknown API selected!");

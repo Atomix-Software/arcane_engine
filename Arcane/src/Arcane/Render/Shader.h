@@ -19,6 +19,7 @@ namespace Arcane
 		virtual void SetBool(const std::string& name, bool value) const = 0;
 
 		virtual void SetInt(const std::string& name, int value) const = 0;
+		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) const = 0;
 		virtual void SetInt2(const std::string& name, const glm::ivec2& value) const = 0;
 		virtual void SetInt3(const std::string& name, const glm::ivec3& value) const = 0;
 		virtual void SetInt4(const std::string& name, const glm::ivec4& value) const = 0;

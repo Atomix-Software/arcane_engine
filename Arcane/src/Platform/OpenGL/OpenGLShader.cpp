@@ -176,6 +176,13 @@ namespace Arcane
         glUniform1i(location, value);
     }
 
+    void OpenGLShader::UploadUniformIntv(const std::string& name, int* values, uint32_t count) const
+    {
+        ARC_PROFILE_FUNCTION();
+        GLint location = glGetUniformLocation(m_RendererId, name.c_str());
+        glUniform1iv(location, count, values);
+    }
+
     void OpenGLShader::UploadUniformInt2(const std::string& name, const glm::ivec2& value) const
     {
         ARC_PROFILE_FUNCTION();

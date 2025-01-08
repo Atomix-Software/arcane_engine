@@ -35,9 +35,10 @@ namespace Arcane
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGLRenderAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vao)
+	void OpenGLRenderAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vao, uint32_t count)
 	{
-		glDrawElements(GL_TRIANGLES, vao->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		uint32_t indexCount = count != 0 ? count : vao->GetIndexBuffer()->GetCount();
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }

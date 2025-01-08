@@ -61,7 +61,7 @@ namespace Arcane
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
 		ARC_PROFILE_FUNCTION();
-		glActiveTexture(slot);
+		glActiveTexture(GL_TEXTURE0 + slot);
 		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 	}
 

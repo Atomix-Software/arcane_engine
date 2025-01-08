@@ -16,5 +16,5 @@ public:
 
 private:
 	Arcane::OrthoCameraController* m_CamController;
-
+	Arcane::Shared<Arcane::Texture2D> m_Texture;
 };

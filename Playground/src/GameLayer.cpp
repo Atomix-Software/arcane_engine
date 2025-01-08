@@ -13,6 +13,7 @@ GameLayer::GameLayer() :
 void GameLayer::OnAttach()
 {
 	ARC_PROFILE_FUNCTION();
+	m_Texture = Arcane::Texture2D::Create("assets/textures/whoa.png");
 }
 
 void GameLayer::OnDetach()
@@ -23,13 +24,15 @@ void GameLayer::OnDetach()
 void GameLayer::OnUpdate(Arcane::Timestep ts)
 {
 	ARC_PROFILE_FUNCTION();
+	Arcane::Renderer2D::ResetStats();
 	m_CamController->OnUpdate(ts);
 	
 	Arcane::RenderCMD::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 	Arcane::RenderCMD::Clear(true);
 
 	Arcane::Renderer2D::BeginScene(*m_CamController->GetCamera());
-
+	Arcane::Renderer2D::DrawRotatedQuad({ 0, 0, -0.1 }, { 1, 1 }, 45, { 0, 0, 1, 1 });
+	Arcane::Renderer2D::DrawQuad({ 0, 0, 0 }, { 1, 1 }, m_Texture);
 	Arcane::Renderer2D::EndScene();
 }
 
@@ -41,17 +44,13 @@ void GameLayer::OnEvent(Arcane::Event& event)
 void GameLayer::OnImGuiRender()
 {
 	ARC_PROFILE_FUNCTION();
+
 	ImGui::Begin("Settings");
+	Arcane::Renderer2D::Statistics stats = Arcane::Renderer2D::GetStats();
+	ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+	ImGui::Text("Quad Count: %d", stats.QuadCount);
 
-	//for (auto& result : m_ProfileResults)
-	//{
-	//	char label[50];
-	//	strcpy(label, "%.3fms   ");
-	//	strcat(label, result.Name);
-	//
-	//	ImGui::Text(label, result.Time);
-	//}
-	//m_ProfileResults.clear();
-
+	ImGui::Text("Vertex Count: %d", stats.GetTotalVertexCount());
+	ImGui::Text("Index Count: %d", stats.GetTotalIndexCount());
 	ImGui::End();
 }
