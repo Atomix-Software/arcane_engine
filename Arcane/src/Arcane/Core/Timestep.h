@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Arcane/Core/Base.h"
+#include <chrono>
+
 namespace Arcane
 {
 	class Timestep

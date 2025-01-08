@@ -17,6 +17,7 @@ namespace Arcane
 
     OpenGLShader::OpenGLShader(const std::string& shaderFile)
     {
+        ARC_PROFILE_FUNCTION();
         std::string src = ReadFile(shaderFile);
         auto sources = Preprocess(src);
         Compile(sources);
@@ -31,6 +32,7 @@ namespace Arcane
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertSrc, const std::string& fragSrc) :
         m_Name(name)
 	{
+        ARC_PROFILE_FUNCTION();
         std::unordered_map<GLenum, std::string> sources;
         sources[GL_VERTEX_SHADER] = vertSrc;
         sources[GL_FRAGMENT_SHADER] = fragSrc;
@@ -40,11 +42,13 @@ namespace Arcane
 
 	OpenGLShader::~OpenGLShader()
 	{
+        ARC_PROFILE_FUNCTION();
         glDeleteProgram(m_RendererId);
 	}
 
     std::string OpenGLShader::ReadFile(const std::string& file)
     {
+        ARC_PROFILE_FUNCTION();
         std::ifstream in(file, std::ios::in | std::ios::binary);
         ARC_CORE_ASSERT(in, "Failed to load shader file {0}", file);
 
@@ -60,6 +64,7 @@ namespace Arcane
 
     std::unordered_map<GLenum, std::string> OpenGLShader::Preprocess(const std::string& source)
     {
+        ARC_PROFILE_FUNCTION();
         std::unordered_map<GLenum, std::string> sources;
 
         const char* typeToken = "#type";
@@ -83,6 +88,7 @@ namespace Arcane
 
     void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& srcs)
     {
+        ARC_PROFILE_FUNCTION();
         GLuint program = glCreateProgram();
         ARC_CORE_ASSERT(srcs.size() <= 2, "We only support Vertex and Fragment shaders for now!");
         std::array<GLuint, 2> glShaderIds;
@@ -148,11 +154,13 @@ namespace Arcane
 
     void OpenGLShader::Bind() const
     {
+        ARC_PROFILE_FUNCTION();
         glUseProgram(m_RendererId);
     }
 
     void OpenGLShader::Unbind() const
     {
+        ARC_PROFILE_FUNCTION();
         glUseProgram(0);
     }
 
@@ -163,60 +171,70 @@ namespace Arcane
 
     void OpenGLShader::UploadUniformInt(const std::string& name, int value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniform1i(location, value);
     }
 
     void OpenGLShader::UploadUniformInt2(const std::string& name, const glm::ivec2& value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniform2i(location, value.x, value.y);
     }
 
     void OpenGLShader::UploadUniformInt3(const std::string& name, const glm::ivec3& value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniform3i(location, value.x, value.y, value.z);
     }
 
     void OpenGLShader::UploadUniformInt4(const std::string& name, const glm::ivec4& value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniform4i(location, value.x, value.y, value.z, value.w);
     }
 
     void OpenGLShader::UploadUniformFloat(const std::string& name, float value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniform1f(location, value);
     }
 
     void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniform2f(location, value.x, value.y);
     }
 
     void OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniform3f(location, value.x, value.y, value.z);
     }
 
     void OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniform4f(location, value.x, value.y, value.z, value.w);
     }
 
     void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniformMatrix3fv(location, 1, false, glm::value_ptr(value));
     }
 
     void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& value) const
     {
+        ARC_PROFILE_FUNCTION();
         GLint location = glGetUniformLocation(m_RendererId, name.c_str());
         glUniformMatrix4fv(location, 1, false, glm::value_ptr(value));
     }

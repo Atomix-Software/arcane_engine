@@ -11,17 +11,20 @@ namespace Arcane
 
     void Renderer::Init()
     {
+        ARC_PROFILE_FUNCTION();
         RenderCMD::Init();
         Renderer2D::Init();
     }
 
     void Renderer::Shutdown()
     {
+        ARC_PROFILE_FUNCTION();
         Renderer2D::Shutdown();
     }
 
     void Renderer::BeginScene(OrthographicCamera& camera)
     {
+        ARC_PROFILE_FUNCTION();
         ARC_CORE_ASSERT(!m_SceneData->Rendering, "Must call EndScene before BeginScene!");
 
         m_SceneData->ShaderCount = 0;
@@ -33,6 +36,7 @@ namespace Arcane
 
     void Renderer::EndScene()
     {
+        ARC_PROFILE_FUNCTION();
         ARC_CORE_ASSERT(m_SceneData->Rendering, "Must call BeginScene before EndScene!");
 
         for (auto& shader : m_SceneData->Shaders)
@@ -68,6 +72,7 @@ namespace Arcane
 
     void Renderer::ResizeViewport(uint32_t width, uint32_t height)
     {
+        ARC_PROFILE_FUNCTION();
         RenderCMD::SetViewport(0, 0, width, height);
     }
 
@@ -82,6 +87,7 @@ namespace Arcane
 
     void Renderer::Submit(const Shared<Shader>& shader, const Shared<VertexArray>& vao, const Shared<Texture2D>& texture, const glm::vec3 color, const glm::mat4& transform)
     {
+        ARC_PROFILE_FUNCTION();
         ARC_CORE_ASSERT(m_SceneData->Rendering, "Must call BeginScene before Submit!");
 
         // Add shader if not already in the list
@@ -114,6 +120,7 @@ namespace Arcane
 
     void Renderer2D::Init()
     {
+        ARC_PROFILE_FUNCTION();
         s_Data = new RenderData2D();
         s_Data->VertexArray = VertexArray::Create();
 
@@ -150,18 +157,19 @@ namespace Arcane
 
     void Renderer2D::Shutdown()
     {
-
+        ARC_PROFILE_FUNCTION();
     }
 
     void Renderer2D::BeginScene(OrthographicCamera& camera)
     {
+        ARC_PROFILE_FUNCTION();
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetMat4("u_ProjectionView", camera.GetProjectionView());
     }
 
     void Renderer2D::EndScene()
     {
-
+        ARC_PROFILE_FUNCTION();
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -181,6 +189,7 @@ namespace Arcane
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Shared<Texture2D>& texture, const TextureProps& props)
     {
+        ARC_PROFILE_FUNCTION();
         s_Data->TextureShader->SetFloat4("u_Color", props.Color);
         s_Data->TextureShader->SetFloat("u_TileFactor", props.TileFactor);
         texture->Bind();
@@ -211,6 +220,7 @@ namespace Arcane
 
     void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Shared<Texture2D>& texture, const TextureProps& props)
     {
+        ARC_PROFILE_FUNCTION();
         s_Data->TextureShader->SetFloat4("u_Color", props.Color);
         s_Data->TextureShader->SetFloat("u_TileFactor", props.TileFactor);
         texture->Bind();

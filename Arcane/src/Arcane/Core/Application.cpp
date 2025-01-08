@@ -12,6 +12,7 @@ namespace Arcane
 
 	Application::Application(WindowProps winProps)
 	{
+		ARC_PROFILE_FUNCTION();
 		ARC_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -26,16 +27,19 @@ namespace Arcane
 
 	Application::~Application()
 	{
+		ARC_PROFILE_FUNCTION();
 		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
+		ARC_PROFILE_FUNCTION();
 		m_LayerStack.PushLayer(layer);
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
+		ARC_PROFILE_FUNCTION();
 		m_LayerStack.PushOverlay(overlay);
 	}
 
@@ -74,6 +78,7 @@ namespace Arcane
 
 	void Application::Run()
 	{
+		ARC_PROFILE_FUNCTION();
 		while (m_Running)
 		{
 			float time = (float)glfwGetTime();

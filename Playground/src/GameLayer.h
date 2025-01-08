@@ -2,10 +2,10 @@
 
 #include <Arcane.h>
 
-class Layer2D : public Arcane::Layer
+class GameLayer : public Arcane::Layer
 {
 public:
-	Layer2D();
+	GameLayer();
 
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
@@ -16,4 +16,5 @@ public:
 
 private:
 	Arcane::OrthoCameraController* m_CamController;
+
 };

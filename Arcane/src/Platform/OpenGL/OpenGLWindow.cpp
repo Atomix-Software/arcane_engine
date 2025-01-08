@@ -13,7 +13,7 @@
 namespace Arcane
 {
 
-	static bool s_GLFWInitialized = false;
+	static int s_GLFWwindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
@@ -22,6 +22,7 @@ namespace Arcane
 
 	OpenGLWindow::OpenGLWindow(const WindowProps& props)
 	{
+		ARC_PROFILE_FUNCTION();
 		Init(props);
 	}
 
@@ -32,21 +33,20 @@ namespace Arcane
 
 	void OpenGLWindow::Init(const WindowProps& props)
 	{
+		ARC_PROFILE_FUNCTION();
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		if (!s_GLFWInitialized)
+		if (s_GLFWwindowCount == 0)
 		{
 			int success = glfwInit();
 			ARC_CORE_ASSERT(success, "Could not initialize GLFW!");
-
 			glfwSetErrorCallback(GLFWErrorCallback);
-
-			s_GLFWInitialized = true;
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		++s_GLFWwindowCount;
 
 		const GLFWvidmode* vid_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwSetWindowPos(m_Window, (vid_mode->width - props.Width) / 2, (vid_mode->height - props.Height) / 2);
@@ -149,17 +149,24 @@ namespace Arcane
 
 	void OpenGLWindow::Shutdown()
 	{
+		ARC_PROFILE_FUNCTION();
 		glfwDestroyWindow(m_Window);
+		--s_GLFWwindowCount;
+
+		if (s_GLFWwindowCount == 0)
+			glfwTerminate();
 	}
 
 	void OpenGLWindow::OnUpdate()
 	{
+		ARC_PROFILE_FUNCTION();
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
 
 	void OpenGLWindow::SetVSync(bool enabled)
 	{
+		ARC_PROFILE_FUNCTION();
 		if (enabled)
 			glfwSwapInterval(1);
 		else

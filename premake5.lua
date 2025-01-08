@@ -70,9 +70,7 @@ project "Arcane"
 		defines 
 		{
 			"_CRT_SECURE_NO_WARNINGS",
-			"GLFW_INCLUDE_NONE",
-			"ARC_PLATFORM_WINDOWS",
-			"ARC_BUILD_DLL"
+			"GLFW_INCLUDE_NONE"
 		}
 		
 	filter "configurations:Debug"

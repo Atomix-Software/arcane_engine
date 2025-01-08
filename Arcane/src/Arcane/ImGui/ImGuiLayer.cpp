@@ -28,6 +28,7 @@ namespace Arcane
 
 	void ImGuiLayer::OnAttach()
 	{
+        ARC_PROFILE_FUNCTION();
         IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 
@@ -57,6 +58,7 @@ namespace Arcane
 
 	void ImGuiLayer::OnDetach()
 	{
+        ARC_PROFILE_FUNCTION();
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -64,18 +66,19 @@ namespace Arcane
 
     void ImGuiLayer::OnImGuiRender()
     {
-        static bool show = true;
-        ImGui::ShowDemoWindow(&show);
-
+        ARC_PROFILE_FUNCTION();
+#ifdef ARC_DEBUG
         ImGui::Begin("Renderer Info");
         ImGui::Text("Vendor: %s",   glGetString(GL_VENDOR));
         ImGui::Text("Renderer: %s", glGetString(GL_RENDERER));
         ImGui::Text("OpenGL: %s",   glGetString(GL_VERSION));
         ImGui::End();
+#endif
     }
 
     void ImGuiLayer::Begin()
     {
+        ARC_PROFILE_FUNCTION();
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -83,6 +86,7 @@ namespace Arcane
 
     void ImGuiLayer::End()
     {
+        ARC_PROFILE_FUNCTION();
         ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
         io.DisplaySize = ImVec2((float) app.GetWindow()->GetWidth(), (float) app.GetWindow()->GetHeight());

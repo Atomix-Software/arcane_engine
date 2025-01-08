@@ -17,6 +17,8 @@ namespace Arcane
 
 	void OpenGLContext::Init()
 	{
+		ARC_PROFILE_FUNCTION();
+
 		glfwMakeContextCurrent(m_WinHandle);
 		if (!s_GLADInitialized)
 		{
@@ -29,6 +31,7 @@ namespace Arcane
 
 	void OpenGLContext::SwapBuffers()
 	{
+		ARC_PROFILE_FUNCTION();
 		glfwSwapBuffers(m_WinHandle);
 	}
 }

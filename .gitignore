@@ -19,3 +19,6 @@ imgui*.ini
 .log
 Arcane.log
 Arcane*.log
+
+# Profiling Files
+*Profile-*.json

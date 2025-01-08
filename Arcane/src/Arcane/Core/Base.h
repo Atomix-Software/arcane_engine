@@ -1,5 +1,17 @@
 #pragma once
 
+#ifdef _WIN32
+	#ifdef _WIN64
+		#ifndef ARC_PLATFORM_WINDOWS
+		#define ARC_PLATFORM_WINDOWS
+		#endif
+	#else
+		#error "x86 Builds are not supported!"
+	#endif
+#else
+	#error "Other OS Builds are currently unsupported!"
+#endif
+
 #ifdef ARC_PLATFORM_WINDOWS
 	#ifdef ARC_DYNAMIC_LINK
 		#ifdef ARC_BUILD_DLL
@@ -18,6 +30,9 @@
 
 #ifdef ARC_DEBUG
 	#define ARC_ENABLE_ASSERTS
+	#define ARC_PROFILE 1
+#else
+	#define ARC_PROFILE 0
 #endif
 
 #ifdef ARC_ENABLE_ASSERTS
