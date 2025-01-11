@@ -21,6 +21,7 @@ namespace Arcane
 		virtual ~Application();
 
 		void Run();
+		void Stop();
 
 		void OnEvent(Event& e);
 

@@ -51,8 +51,8 @@ namespace Arcane
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
-			(*--it)->OnEvent(e);
 			if (e.Handled) break;
+			(*--it)->OnEvent(e);
 		}
 	}
 
@@ -98,6 +98,11 @@ namespace Arcane
 
 			m_Window->OnUpdate();
 		}
+	}
+
+	void Application::Stop()
+	{
+		if (m_Running) m_Running = false;
 	}
 
 }

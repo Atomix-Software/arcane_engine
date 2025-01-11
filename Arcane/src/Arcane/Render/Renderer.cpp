@@ -120,13 +120,13 @@ namespace Arcane
 
     struct RenderData2D
     {
-        static const uint32_t Max_Quads = 10000;
+        static const uint32_t Max_Quads = 20000;
         static const uint32_t Max_Vertices = Max_Quads * 4;
         static const uint32_t Max_Indices  = Max_Quads * 6;
         static const uint32_t Max_TextureSlots = 32;
 
-        Shared<VertexArray> VertexArray;
-        Shared<VertexBuffer> VertexBuffer;
+        Shared<VertexArray> QuadVertexArray;
+        Shared<VertexBuffer> QuadVertexBuffer;
 
         Shared<Shader> TextureShader;
         Shared<Texture2D> WhiteTexture;
@@ -149,17 +149,17 @@ namespace Arcane
     {
         ARC_PROFILE_FUNCTION();
 
-        s_Data.VertexArray = VertexArray::Create();
+        s_Data.QuadVertexArray = VertexArray::Create();
 
-        s_Data.VertexBuffer = VertexBuffer::Create(RenderData2D::Max_Vertices * sizeof(QuadVertex));
-        s_Data.VertexBuffer->SetLayout({
+        s_Data.QuadVertexBuffer = VertexBuffer::Create(RenderData2D::Max_Vertices * sizeof(QuadVertex));
+        s_Data.QuadVertexBuffer->SetLayout({
             { ShaderDataType::Float3, "a_Position" },
             { ShaderDataType::Float4, "a_Color" },
             { ShaderDataType::Float2, "a_TexCoord" },
             { ShaderDataType::Float,  "a_TexIndex" },
             { ShaderDataType::Float,  "a_TilingFactor" }
         });
-        s_Data.VertexArray->AddVertexBuffer(s_Data.VertexBuffer);
+        s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
         s_Data.QuadBufferBase = new QuadVertex[RenderData2D::Max_Vertices];
 
@@ -180,7 +180,7 @@ namespace Arcane
         }
 
         Shared<IndexBuffer> ebo = IndexBuffer::Create(quadIndices, RenderData2D::Max_Indices);
-        s_Data.VertexArray->SetIndexBuffer(ebo);
+        s_Data.QuadVertexArray->SetIndexBuffer(ebo);
         delete[] quadIndices;
 
         s_Data.WhiteTexture = Texture2D::Create(1, 1);
@@ -223,7 +223,7 @@ namespace Arcane
         ARC_PROFILE_FUNCTION();
 
         uint32_t dataSize = (uint32_t) ((uint8_t*)s_Data.QuadBufferPtr - (uint8_t*)s_Data.QuadBufferBase);
-        s_Data.VertexBuffer->SetData(s_Data.QuadBufferBase, dataSize);
+        s_Data.QuadVertexBuffer->SetData(s_Data.QuadBufferBase, dataSize);
 
         Flush();
     }
@@ -235,9 +235,7 @@ namespace Arcane
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
             s_Data.TextureSlots[i]->Bind(i);
 
-        s_Data.VertexArray->Bind();
-        RenderCMD::DrawIndexed(s_Data.VertexArray, s_Data.QuadIndexCount);
-
+        RenderCMD::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
         s_Data.Stats.DrawCalls++;
     }
 
@@ -246,8 +244,9 @@ namespace Arcane
         EndScene();
 
         s_Data.QuadIndexCount = 0;
-        s_Data.TextureSlotIndex = 1;
         s_Data.QuadBufferPtr = s_Data.QuadBufferBase;
+
+        s_Data.TextureSlotIndex = 1;
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -270,11 +269,11 @@ namespace Arcane
     {
         ARC_PROFILE_FUNCTION();
 
-        constexpr size_t quadVertexCount = 4;
-        constexpr glm::vec2 texCoords[] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
-
         if (s_Data.QuadIndexCount >= RenderData2D::Max_Indices)
             FlushAndReset();
+
+        constexpr size_t quadVertexCount = 4;
+        constexpr glm::vec2 texCoords[] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
 
         float textureIndex = 0.0f;
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
@@ -288,6 +287,9 @@ namespace Arcane
 
         if (textureIndex == 0.0f)
         {
+            if (s_Data.TextureSlotIndex >= RenderData2D::Max_TextureSlots)
+                FlushAndReset();
+
             textureIndex = (float)s_Data.TextureSlotIndex;
             s_Data.TextureSlots[(uint32_t)textureIndex] = texture;
             s_Data.TextureSlotIndex++;
@@ -301,6 +303,58 @@ namespace Arcane
             s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
             s_Data.QuadBufferPtr->Color = props.Color;
             s_Data.QuadBufferPtr->TexCoord = texCoords[i];
+            s_Data.QuadBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
+            s_Data.QuadBufferPtr++;
+        }
+
+        s_Data.QuadIndexCount += 6;
+        s_Data.Stats.QuadCount++;
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Shared<SubTexture2D>& subTexture, const TextureProps& props)
+    {
+        DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, props);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Shared<SubTexture2D>& subTexture, const TextureProps& props)
+    {
+        ARC_PROFILE_FUNCTION();
+
+        if (s_Data.QuadIndexCount >= RenderData2D::Max_Indices)
+            FlushAndReset();
+
+        constexpr size_t quadVertexCount = 4;
+        Shared<Texture2D> texture = subTexture->GetTexture();
+
+        float textureIndex = 0.0f;
+        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
+        {
+            if (*s_Data.TextureSlots[i].get() == *texture.get())
+            {
+                textureIndex = (float)i;
+                break;
+            }
+        }
+
+        if (textureIndex == 0.0f)
+        {
+            if (s_Data.TextureSlotIndex >= RenderData2D::Max_TextureSlots)
+                FlushAndReset();
+
+            textureIndex = (float)s_Data.TextureSlotIndex;
+            s_Data.TextureSlots[(uint32_t)textureIndex] = texture;
+            s_Data.TextureSlotIndex++;
+        }
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::scale(glm::mat4(1.0), { size.x, size.y, 1.0f });
+
+        for (size_t i = 0; i < quadVertexCount; ++i)
+        {
+            s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadBufferPtr->Color = props.Color;
+            s_Data.QuadBufferPtr->TexCoord = subTexture->GetTexCoords()[i];
             s_Data.QuadBufferPtr->TexIndex = textureIndex;
             s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
             s_Data.QuadBufferPtr++;
@@ -329,11 +383,11 @@ namespace Arcane
     {
         ARC_PROFILE_FUNCTION();
 
-        constexpr size_t quadVertexCount = 4;
-        constexpr glm::vec2 texCoords[] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
-
         if (s_Data.QuadIndexCount >= RenderData2D::Max_Indices)
             FlushAndReset();
+
+        constexpr size_t quadVertexCount = 4;
+        constexpr glm::vec2 texCoords[] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
 
         float textureIndex = 0.0f;
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
@@ -347,6 +401,9 @@ namespace Arcane
 
         if (textureIndex == 0.0f)
         {
+            if (s_Data.TextureSlotIndex >= RenderData2D::Max_TextureSlots)
+                FlushAndReset();
+
             textureIndex = (float)s_Data.TextureSlotIndex;
             s_Data.TextureSlots[(uint32_t)textureIndex] = texture;
             s_Data.TextureSlotIndex++;
@@ -361,6 +418,59 @@ namespace Arcane
             s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
             s_Data.QuadBufferPtr->Color = props.Color;
             s_Data.QuadBufferPtr->TexCoord = texCoords[i];
+            s_Data.QuadBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
+            s_Data.QuadBufferPtr++;
+        }
+
+        s_Data.QuadIndexCount += 6;
+        s_Data.Stats.QuadCount++;
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Shared<SubTexture2D>& subTexture, const TextureProps& props)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, subTexture, props);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Shared<SubTexture2D>& subTexture, const TextureProps& props)
+    {
+        ARC_PROFILE_FUNCTION();
+
+        if (s_Data.QuadIndexCount >= RenderData2D::Max_Indices)
+            FlushAndReset();
+
+        constexpr size_t quadVertexCount = 4;
+        Shared<Texture2D> texture = subTexture->GetTexture();
+
+        float textureIndex = 0.0f;
+        for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
+        {
+            if (*s_Data.TextureSlots[i].get() == *texture.get())
+            {
+                textureIndex = (float)i;
+                break;
+            }
+        }
+
+        if (textureIndex == 0.0f)
+        {
+            if (s_Data.TextureSlotIndex >= RenderData2D::Max_TextureSlots)
+                FlushAndReset();
+
+            textureIndex = (float)s_Data.TextureSlotIndex;
+            s_Data.TextureSlots[(uint32_t)textureIndex] = texture;
+            s_Data.TextureSlotIndex++;
+        }
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0, 0, 1 }) *
+            glm::scale(glm::mat4(1.0), { size.x, size.y, 1.0f });
+
+        for (size_t i = 0; i < quadVertexCount; ++i)
+        {
+            s_Data.QuadBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadBufferPtr->Color = props.Color;
+            s_Data.QuadBufferPtr->TexCoord = subTexture->GetTexCoords()[i];
             s_Data.QuadBufferPtr->TexIndex = textureIndex;
             s_Data.QuadBufferPtr->TilingFactor = props.TileFactor;
             s_Data.QuadBufferPtr++;

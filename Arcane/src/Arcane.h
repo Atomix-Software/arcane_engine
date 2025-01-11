@@ -21,6 +21,7 @@
 #include "Arcane/Render/Buffer.h"
 #include "Arcane/Render/Shader.h"
 #include "Arcane/Render/Texture.h"
+#include "Arcane/Render/SubTexture.h"
 #include "Arcane/Render/VertexArray.h"
 
 #include "Arcane/Render/Camera.h"
