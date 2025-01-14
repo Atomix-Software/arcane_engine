@@ -87,6 +87,61 @@ project "Arcane"
 		defines "ARC_DIST"
 		runtime "Release"
 		optimize "on"
+
+project "Grimoire"
+	location "Grimoire"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+	staticruntime "on"
+	
+	buildoptions{"/utf-8"}
+	
+	targetdir("bin/" .. OUTPUT_DIR .. "/%{prj.name}")
+	objdir("bin-int/" .. OUTPUT_DIR .. "/%{prj.name}")
+	
+	files 
+	{
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/src/**.c",
+		"%{prj.name}/src/**.hpp",
+		"%{prj.name}/src/**.h"
+	}
+	
+	includedirs 
+	{
+		"Arcane/src",
+		"%{INCLUDE_DIR.SPD_LOG}",
+		"%{INCLUDE_DIR.IMGUI}",
+		"%{INCLUDE_DIR.GLM}",
+	}
+	
+	links {
+		"Arcane"
+	}
+	
+	filter "system:windows"
+		systemversion "latest"
+	
+		defines 
+		{
+			"ARC_PLATFORM_WINDOWS"
+		}
+		
+	filter "configurations:Debug"
+		defines "ARC_DEBUG"
+		runtime "Debug"
+		symbols "on"
+		
+	filter "configurations:Release"
+		defines "ARC_RELEASE"
+		runtime "Release"
+		optimize "on"
+		
+	filter "configurations:Distribution"
+		defines "ARC_DIST"
+		runtime "Release"
+		optimize "on"
 		
 project "Playground"
 	location "Playground"

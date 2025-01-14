@@ -16,7 +16,5 @@ public:
 
 private:
 	Arcane::OrthoCameraController* m_CamController;
-	Arcane::Shared<Arcane::Texture2D> m_Texture, m_Spritesheet;
 
-	Arcane::Shared<Arcane::SubTexture2D> m_Dirt, m_Grass;
 };
