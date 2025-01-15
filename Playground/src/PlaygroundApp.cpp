@@ -11,13 +11,6 @@ public:
 	{
 		PushLayer(new GameLayer);
 	}
-
-	~Playground()
-	{
-
-	}
-
-
 };
 
 Arcane::Application* Arcane::CreateApplication()

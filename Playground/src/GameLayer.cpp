@@ -10,9 +10,18 @@ GameLayer::GameLayer() :
 	m_CamController = new Arcane::OrthoCameraController((float)width / (float)height);
 }
 
+GameLayer::~GameLayer()
+{
+	delete m_CamController;
+}
+
 void GameLayer::OnAttach()
 {
 	ARC_PROFILE_FUNCTION();
+	m_Spritesheet = Arcane::Texture2D::Create("assets/textures/blocks.png");
+
+	m_Dirt = Arcane::SubTexture2D::CreateFromCoords(m_Spritesheet, { 2, 15 }, { 16, 16 });
+	m_Grass = Arcane::SubTexture2D::CreateFromCoords(m_Spritesheet, { 0, 15 }, { 16, 16 });
 
 }
 
@@ -31,6 +40,18 @@ void GameLayer::OnUpdate(Arcane::Timestep ts)
 	Arcane::RenderCMD::Clear(true);
 
 	Arcane::Renderer2D::BeginScene(*m_CamController->GetCamera());
+
+	constexpr int size = 25;
+	constexpr glm::vec2 scale = { 0.5f, 0.5f };
+	for (int x = 0; x < size; x++)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			glm::vec2 position = { (x * scale.x) - (size * scale.x) / 2, (y * scale.y) - (size * scale.y) / 2 };
+			if ((x + y) % 2 == 0) Arcane::Renderer2D::DrawQuad(position, scale, m_Grass);
+			else  Arcane::Renderer2D::DrawQuad(position, scale, m_Dirt);
+		}
+	}
 
 	Arcane::Renderer2D::EndScene();
 }
