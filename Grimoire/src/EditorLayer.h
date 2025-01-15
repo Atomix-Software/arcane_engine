@@ -8,6 +8,7 @@ namespace Arcane
 	{
 	public:
 		EditorLayer();
+		virtual ~EditorLayer() override {}
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
@@ -18,8 +19,13 @@ namespace Arcane
 
 	private:
 		Arcane::OrthoCameraController* m_CamController;
-		Arcane::Shared<Arcane::Texture2D> m_Texture, m_Spritesheet;
+		Arcane::Shared<Arcane::Texture2D> m_Spritesheet;
+		Arcane::Shared <Arcane::Framebuffer> m_Framebuffer;
 
 		Arcane::Shared<Arcane::SubTexture2D> m_Dirt, m_Grass;
+
+		bool m_ViewportFocused, m_ViewportHovered;
+		glm::vec2 m_ViewportSize;
+
 	};
 }

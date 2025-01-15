@@ -13,11 +13,6 @@ namespace Arcane
 		{
 			PushLayer(new EditorLayer());
 		}
-
-		~GrimoireApp()
-		{
-
-		}
 	};
 
 	Application* CreateApplication()

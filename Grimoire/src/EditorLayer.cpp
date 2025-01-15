@@ -11,16 +11,27 @@ namespace Arcane
 		uint32_t width = Arcane::Application::Get().GetWindow()->GetWidth();
 		uint32_t height = Arcane::Application::Get().GetWindow()->GetHeight();
 		m_CamController = new Arcane::OrthoCameraController((float)width / (float)height);
+
+		m_ViewportFocused = false;
+		m_ViewportHovered = false;
+		m_ViewportSize = { (float) width, (float) height };
 	}
 
 	void EditorLayer::OnAttach()
 	{
 		ARC_PROFILE_FUNCTION();
-		m_Texture = Arcane::Texture2D::Create("assets/textures/whoa.png");
 		m_Spritesheet = Arcane::Texture2D::Create("assets/textures/blocks.png");
 
 		m_Dirt = Arcane::SubTexture2D::CreateFromCoords(m_Spritesheet, { 2, 15 }, { 16, 16 });
 		m_Grass = Arcane::SubTexture2D::CreateFromCoords(m_Spritesheet, { 0, 15 }, { 16, 16 });
+
+		uint32_t width = Arcane::Application::Get().GetWindow()->GetWidth();
+		uint32_t height = Arcane::Application::Get().GetWindow()->GetHeight();
+		Arcane::FramebufferSpec frameBufferSpec;
+		frameBufferSpec.Width  = width;
+		frameBufferSpec.Height = height;
+
+		m_Framebuffer = Arcane::Framebuffer::Create(frameBufferSpec);
 	}
 
 	void EditorLayer::OnDetach()
@@ -30,9 +41,13 @@ namespace Arcane
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
 		ARC_PROFILE_FUNCTION();
-		Arcane::Renderer2D::ResetStats();
-		m_CamController->OnUpdate(ts);
 
+		if(m_ViewportFocused)
+			m_CamController->OnUpdate(ts);
+
+		Arcane::Renderer2D::ResetStats();
+
+		m_Framebuffer->Bind();
 		Arcane::RenderCMD::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 		Arcane::RenderCMD::Clear(true);
 
@@ -51,6 +66,7 @@ namespace Arcane
 		}
 
 		Arcane::Renderer2D::EndScene();
+		m_Framebuffer->Unbind();
 	}
 
 	void EditorLayer::OnEvent(Event& e)
@@ -108,6 +124,31 @@ namespace Arcane
 
 			ImGui::EndMenuBar();
 		}
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
+		if (ImGui::Begin("Viewport"))
+		{
+			m_ViewportFocused = ImGui::IsWindowFocused();
+			m_ViewportHovered = ImGui::IsWindowHovered();
+			Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+
+			uint32_t textureID = m_Framebuffer->GetColorAttRendererID();
+			ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+
+			if (m_ViewportSize != *((glm::vec2*)&viewportSize) && (viewportSize.x > 0 && viewportSize.y > 0))
+			{
+				m_ViewportSize = { viewportSize.x, viewportSize.y };
+				m_CamController->OnResize(m_ViewportSize.x, m_ViewportSize.y);
+				m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			}
+
+			ImGui::Image(textureID, *((ImVec2*)&m_ViewportSize), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+		}
+		else {
+			Application::Get().GetImGuiLayer()->BlockEvents(true);
+		}
+		ImGui::End();
+		ImGui::PopStyleVar();
 
 		ImGui::Begin("2D Renderer Stats");
 		Arcane::Renderer2D::Statistics stats = Arcane::Renderer2D::GetStats();
