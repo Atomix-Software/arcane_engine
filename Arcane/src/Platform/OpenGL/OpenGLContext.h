@@ -4,7 +4,7 @@
 
 namespace Arcane
 {
-	class OpenGLContext : public GraphicsContext
+	class ARC_API OpenGLContext : public GraphicsContext
 	{
 	public:
 		OpenGLContext(GLFWwindow* winHandle);

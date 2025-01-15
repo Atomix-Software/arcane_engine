@@ -5,7 +5,7 @@
 
 namespace Arcane
 {
-	class WindowResizeEvent : public Event
+	class ARC_API WindowResizeEvent : public Event
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
@@ -28,7 +28,7 @@ namespace Arcane
 		unsigned int m_Width, m_Height;
 	};
 
-	class WindowCloseEvent : public Event
+	class ARC_API WindowCloseEvent : public Event
 	{
 	public:
 		WindowCloseEvent() {}
@@ -37,7 +37,7 @@ namespace Arcane
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class AppTickEvent : public Event
+	class ARC_API AppTickEvent : public Event
 	{
 	public:
 		AppTickEvent() = default;
@@ -46,7 +46,7 @@ namespace Arcane
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class AppUpdateEvent : public Event
+	class ARC_API AppUpdateEvent : public Event
 	{
 	public:
 		AppUpdateEvent() = default;
@@ -55,7 +55,7 @@ namespace Arcane
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
 	};
 
-	class AppRenderEvent : public Event
+	class ARC_API AppRenderEvent : public Event
 	{
 	public:
 		AppRenderEvent() = default;

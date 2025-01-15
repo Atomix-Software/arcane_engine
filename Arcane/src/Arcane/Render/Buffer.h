@@ -4,7 +4,7 @@
 
 namespace Arcane
 {
-	enum class ShaderDataType
+	enum class ARC_API ShaderDataType
 	{
 		None = 0,
 		Int, Int2, Int3, Int4,
@@ -35,7 +35,7 @@ namespace Arcane
 		return 0;
 	}
 
-	struct BufferElement
+	struct ARC_API BufferElement
 	{
 		std::string Name;
 		ShaderDataType Type;
@@ -70,7 +70,7 @@ namespace Arcane
 		}
 	};
 
-	class BufferLayout
+	class ARC_API BufferLayout
 	{
 	public:
 		BufferLayout() = default;

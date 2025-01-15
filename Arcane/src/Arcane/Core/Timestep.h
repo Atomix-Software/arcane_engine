@@ -5,7 +5,7 @@
 
 namespace Arcane
 {
-	class Timestep
+	class ARC_API Timestep
 	{
 	public:
 		Timestep(float time) :

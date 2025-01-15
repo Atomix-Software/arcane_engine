@@ -7,7 +7,7 @@
 
 namespace Arcane
 {
-	class OpenGLWindow : public Window
+	class ARC_API OpenGLWindow : public Window
 	{
 	public:
 		OpenGLWindow(const WindowProps& props);

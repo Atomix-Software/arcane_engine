@@ -37,7 +37,7 @@ namespace Arcane
 
 	};
 
-	class OrthographicCamera : public Camera
+	class ARC_API OrthographicCamera : public Camera
 	{
 	public:
 		OrthographicCamera(float left, float right, float bottom, float top);

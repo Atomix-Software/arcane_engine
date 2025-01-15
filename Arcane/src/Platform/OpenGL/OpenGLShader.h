@@ -5,7 +5,7 @@
 
 namespace Arcane
 {
-	class OpenGLShader : public Shader
+	class ARC_API OpenGLShader : public Shader
 	{
 	public:
 		OpenGLShader(const std::string& shaderFile);

@@ -9,19 +9,19 @@
 
 namespace Arcane
 {
-	struct ProfileResult
+	struct ARC_API ProfileResult
 	{
 		std::string Name;
 		long long Start, End;
 		uint32_t ThreadID;
 	};
 
-	struct InstrumentationSession
+	struct ARC_API InstrumentationSession
 	{
 		std::string Name;
 	};
 
-	class Instrumentor
+	class ARC_API Instrumentor
 	{
 	public:
 		Instrumentor()
@@ -91,7 +91,7 @@ namespace Arcane
 
 	};
 
-	class InstrumentationTimer
+	class ARC_API InstrumentationTimer
 	{
 	public:
 		InstrumentationTimer(const char* name)

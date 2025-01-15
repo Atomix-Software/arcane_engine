@@ -4,7 +4,7 @@
 
 namespace Arcane
 {
-	class RenderCMD
+	class ARC_API RenderCMD
 	{
 	public:
 		inline static void Init()

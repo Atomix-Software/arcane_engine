@@ -9,7 +9,7 @@
 
 namespace Arcane
 {
-	class OrthoCameraController
+	class ARC_API OrthoCameraController
 	{
 	public:
 		OrthoCameraController(float aspectRatio, float zoom = 1.0f);

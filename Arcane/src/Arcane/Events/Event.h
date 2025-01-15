@@ -5,7 +5,7 @@
 namespace Arcane
 {
 
-	enum class EventType
+	enum class ARC_API EventType
 	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
@@ -14,7 +14,7 @@ namespace Arcane
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
-	enum EventCategory
+	enum ARC_API EventCategory
 	{
 		None = 0,
 		EventCategoryApplication =	BIT(0),
@@ -30,7 +30,7 @@ namespace Arcane
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-	class Event
+	class ARC_API Event
 	{
 	public:
 		virtual ~Event() = default;
@@ -49,7 +49,7 @@ namespace Arcane
 
 	};
 
-	class EventDispatcher
+	class ARC_API EventDispatcher
 	{
 	public:
 		EventDispatcher(Event& event) :

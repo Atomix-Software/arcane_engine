@@ -4,7 +4,7 @@
 
 namespace Arcane
 {
-	struct FramebufferSpec
+	struct ARC_API FramebufferSpec
 	{
 		uint32_t Width, Height;
 		uint32_t Samples = 1;

@@ -4,7 +4,7 @@
 
 namespace Arcane
 {
-	class OpenGLVertexBuffer : public VertexBuffer
+	class ARC_API OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
 		OpenGLVertexBuffer(uint32_t size);
@@ -24,7 +24,7 @@ namespace Arcane
 		BufferLayout m_Layout;
 	};
 
-	class OpenGLIndexBuffer : public IndexBuffer
+	class ARC_API OpenGLIndexBuffer : public IndexBuffer
 	{
 	public:
 		OpenGLIndexBuffer(uint32_t* indices, uint32_t count);

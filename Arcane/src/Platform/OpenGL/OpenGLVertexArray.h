@@ -4,7 +4,7 @@
 
 namespace Arcane
 {
-	class OpenGLVertexArray : public VertexArray
+	class ARC_API OpenGLVertexArray : public VertexArray
 	{
 	public:
 		OpenGLVertexArray();

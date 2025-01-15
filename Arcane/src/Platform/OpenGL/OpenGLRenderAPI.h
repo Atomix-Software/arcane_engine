@@ -4,7 +4,7 @@
 
 namespace Arcane
 {
-	class OpenGLRenderAPI : public RenderAPI
+	class ARC_API OpenGLRenderAPI : public RenderAPI
 	{
 	public:
 		virtual ~OpenGLRenderAPI() override {}

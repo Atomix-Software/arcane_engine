@@ -7,7 +7,7 @@
 
 namespace Arcane
 {
-	struct WindowProps
+	struct ARC_API WindowProps
 	{
 		std::string Title;
 		unsigned int Width;

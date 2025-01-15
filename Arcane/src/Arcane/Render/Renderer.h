@@ -9,14 +9,14 @@
 
 namespace Arcane
 {
-	struct RenderData
+	struct ARC_API RenderData
 	{
 		Shared<Texture2D> Texture = nullptr;
 		glm::mat4 Transform = glm::mat4(1.0f);
 		glm::vec3 Color = glm::vec3(1.0f);
 	};
 
-	class Renderer
+	class ARC_API Renderer
 	{
 	public:
 		struct SceneData
@@ -53,7 +53,7 @@ namespace Arcane
 
 	};
 
-	class Renderer2D
+	class ARC_API Renderer2D
 	{
 	public:
 		struct TextureProps
