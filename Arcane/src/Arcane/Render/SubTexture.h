@@ -14,7 +14,7 @@ namespace Arcane
 		inline const Shared<Texture2D> GetTexture() const { return m_Texture; }
 		inline const glm::vec2* GetTexCoords() const { return m_TexCoords; }
 
-		static Shared<SubTexture2D> CreateFromCoords(const Shared<Texture2D>& texture, const glm::vec2& cellPos, const glm::vec2& cellSize);
+		static Shared<SubTexture2D> CreateFromCoords(const Shared<Texture2D>& texture, const glm::vec2& coords, const glm::vec2& spriteSize, const glm::vec2& cellSize = { 1, 1 });
 
 	private:
 		Shared<Texture2D> m_Texture;

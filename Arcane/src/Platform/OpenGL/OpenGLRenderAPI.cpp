@@ -11,9 +11,6 @@ namespace Arcane
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-
 		glEnable(GL_DEPTH_TEST);
 	}
 
@@ -42,10 +39,10 @@ namespace Arcane
 		glViewport(x, y, width, height);
 	}
 
-	void OpenGLRenderAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vao, uint32_t count)
+	void OpenGLRenderAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vao, uint32_t indexCount)
 	{
-		uint32_t indexCount = count != 0 ? count : vao->GetIndexBuffer()->GetCount();
-		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		vao->Bind();
+		uint32_t count = indexCount != 0 ? indexCount : vao->GetIndexBuffer()->GetCount();
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 }

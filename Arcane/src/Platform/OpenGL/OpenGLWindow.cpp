@@ -45,6 +45,12 @@ namespace Arcane
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}
 
+		glfwDefaultWindowHints();
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		++s_GLFWwindowCount;
 
@@ -56,6 +62,7 @@ namespace Arcane
 
 		SetVSync(true);
 		glfwSetWindowUserPointer(m_Window, &m_Data);
+		glfwShowWindow(m_Window);
 
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
