@@ -58,11 +58,16 @@ namespace Arcane
 		dispatcher.Dispatch<MouseScrolledEvent>(ARC_BIND_EVENT_FN(OrthoCameraController::OnMouseScrolled));
 	}
 
-	bool OrthoCameraController::OnWindowResized(WindowResizeEvent& event)
+	void OrthoCameraController::OnResize(float width, float height)
 	{
 		float zoom = m_Camera->GetZoom();
-		m_AspectRatio = (float)event.GetWidth() / (float)event.GetHeight();
+		m_AspectRatio = width / height;
 		m_Camera->SetProjection(-m_AspectRatio * zoom, m_AspectRatio * zoom, -zoom, zoom);
+	}
+
+	bool OrthoCameraController::OnWindowResized(WindowResizeEvent& event)
+	{
+		OnResize((float)event.GetWidth(), (float)event.GetHeight());
 		return false;
 	}
 

@@ -7,7 +7,7 @@ namespace Arcane
 	class ARC_API Texture
 	{
 	public:
-		virtual ~Texture() {}
+		virtual ~Texture() = default;
 
 		virtual void Bind(uint32_t slot = 0) const = 0;
 

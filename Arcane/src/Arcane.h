@@ -23,5 +23,6 @@
 #include "Arcane/Render/Texture.h"
 #include "Arcane/Render/SubTexture.h"
 #include "Arcane/Render/VertexArray.h"
+#include "Arcane/Render/Framebuffer.h"
 
 #include "Arcane/Render/Camera.h"

@@ -18,7 +18,7 @@ namespace Arcane
 	ImGuiLayer::ImGuiLayer() :
 		Layer("ImGuiLayer")
 	{
-
+        m_BlockEvents = true;
 	}
 
 	ImGuiLayer::~ImGuiLayer()
@@ -74,6 +74,15 @@ namespace Arcane
         ImGui::Text("OpenGL: %s",   glGetString(GL_VERSION));
         ImGui::End();
 #endif
+    }
+
+    void ImGuiLayer::OnEvent(Event& event)
+    {
+        if (!m_BlockEvents) return;
+
+        ImGuiIO& io = ImGui::GetIO();
+        event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+        event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
     }
 
     void ImGuiLayer::Begin()

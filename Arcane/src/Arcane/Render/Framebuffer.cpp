@@ -1,20 +1,17 @@
 #include <arcpch.h>
 
-#include "Arcane/Core/Input.h"
-
 #include "Arcane/Render/Renderer.h"
-#include "Platform/Windows/WindowsInput.h"
+
+#include "Platform/OpenGL/OpenGLFramebuffer.h"
 
 namespace Arcane
 {
-	Unique<Input> Input::s_Instance = Create();
-
-	Unique<Input> Input::Create()
+	Shared<Framebuffer> Framebuffer::Create(const FramebufferSpec& specs)
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RenderAPI::API::None: ARC_CORE_ASSERT(false, "RendererAPI::None is not supported!"); return nullptr;
-		case RenderAPI::API::OpenGL: return CreateUnique<WindowsInput>();
+		case RenderAPI::API::OpenGL: return CreateShared<OpenGLFramebuffer>(specs);
 		}
 
 		ARC_CORE_ASSERT(false, "Unknown API selected!");

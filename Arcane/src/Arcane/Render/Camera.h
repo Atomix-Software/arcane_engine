@@ -11,7 +11,7 @@ namespace Arcane
 	{
 	public:
 		Camera() : m_Projection(1.0), m_View(1.0), m_Position(0.0), m_Rotation(0.0), m_Zoom(1.0) {}
-		virtual ~Camera() {};
+		virtual ~Camera() = default;
 
 		inline const glm::mat4& GetView() const { return m_View; }
 		inline const glm::mat4& GetProjection() const { return m_Projection; }

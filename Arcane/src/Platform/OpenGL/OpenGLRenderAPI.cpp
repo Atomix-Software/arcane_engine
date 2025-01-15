@@ -25,6 +25,13 @@ namespace Arcane
 		glClear(clearMask);
 	}
 
+	void OpenGLRenderAPI::EnableDepthTesting(bool enable)
+	{
+		GLenum depthTest = GL_DEPTH_TEST;
+		if (enable) glEnable(depthTest);
+		else		glDisable(depthTest);
+	}
+
 	void OpenGLRenderAPI::SetClearColor(const glm::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);

@@ -17,6 +17,8 @@ namespace Arcane
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& event);
 
+		void OnResize(float width, float height);
+
 		inline const Shared<OrthographicCamera>& GetCamera() { return m_Camera; }
 		inline const glm::vec3& GetPosition() const { return m_Position; }
 

@@ -210,6 +210,7 @@ namespace Arcane
     void Renderer2D::BeginScene(OrthographicCamera& camera)
     {
         ARC_PROFILE_FUNCTION();
+
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetMat4("u_ProjectionView", camera.GetProjectionView());
 

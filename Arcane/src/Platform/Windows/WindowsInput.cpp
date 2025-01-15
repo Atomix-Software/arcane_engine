@@ -1,15 +1,13 @@
 #include <arcpch.h>
 
-#include "Platform/Windows/WindowsInput.h"
-
 #include "Arcane/Core/Application.h"
+#include "Arcane/Core/Input.h"
 
 #include <GLFW/glfw3.h>
 
-
 namespace Arcane
 {
-	bool WindowsInput::IsKeyPressedImpl(int keycode)
+	bool Input::IsKeyPressed(KeyCode keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow()->GetNativeWindow());
 		auto state = glfwGetKey(window, keycode);
@@ -17,7 +15,7 @@ namespace Arcane
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::IsMouseButtonPressedImpl(int button)
+	bool Input::IsMouseButtonPressed(MouseCode button)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow()->GetNativeWindow());
 		auto state = glfwGetMouseButton(window, button);
@@ -25,7 +23,7 @@ namespace Arcane
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	std::pair<float, float> WindowsInput::GetMousePosImpl()
+	std::pair<float, float> Input::GetMousePos()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow()->GetNativeWindow());
 		double mouseX, mouseY;
@@ -34,15 +32,15 @@ namespace Arcane
 		return { (float) mouseX, (float) mouseY };
 	}
 
-	float WindowsInput::GetMouseXImpl()
+	float Input::GetMouseX()
 	{
-		auto [x, y] = GetMousePosImpl();
+		auto [x, y] = GetMousePos();
 		return x;
 	}
 
-	float WindowsInput::GetMouseYImpl()
+	float Input::GetMouseY()
 	{
-		auto [x, y] = GetMousePosImpl();
+		auto [x, y] = GetMousePos();
 		return y;
 	}
 }

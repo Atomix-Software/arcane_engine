@@ -8,6 +8,7 @@ namespace Arcane
 	{
 	public:
 		OpenGLContext(GLFWwindow* winHandle);
+		virtual ~OpenGLContext() override {}
 
 		virtual void Init() override;
 		virtual void SwapBuffers() override;

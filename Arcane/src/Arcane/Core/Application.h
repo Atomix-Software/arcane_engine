@@ -18,7 +18,7 @@ namespace Arcane
 	{
 	public:
 		Application(WindowProps winProps = WindowProps());
-		virtual ~Application();
+		~Application();
 
 		void Run();
 		void Stop();
@@ -30,8 +30,12 @@ namespace Arcane
 
 		inline void PushEvent(const Event& event) { m_Window->PushEvent((Event&)event); }
 
-		inline static Application& Get() { return *s_Instance; }
 		inline const Unique<Window>& GetWindow() const { return m_Window; }
+
+		inline ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+
+		inline static Application& Get() { return *s_Instance; }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);

@@ -17,6 +17,11 @@ namespace Arcane
 			s_RenderAPI->Clear(clearDepth);
 		}
 
+		inline static void EnableDepthTesting(bool enable)
+		{
+			s_RenderAPI->EnableDepthTesting(enable);
+		}
+
 		inline static void SetClearColor(const glm::vec4& color)
 		{
 			s_RenderAPI->SetClearColor(color);
