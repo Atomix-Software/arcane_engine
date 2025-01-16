@@ -3,95 +3,24 @@ workspace "ArcaneEngine"
 	architecture "x64"
 	configurations {"Debug", "Release", "Distribution"}
 	
-	startproject "Playground"
+	startproject "Grimoire"
 	
 	OUTPUT_DIR = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 	
-	INCLUDE_DIR = {}
-	INCLUDE_DIR["GLFW"] = "Arcane/vendors/glfw/include"
-	INCLUDE_DIR["GLM"] = "Arcane/vendors/glm"
-	INCLUDE_DIR["GLAD"] = "Arcane/vendors/glad/include"
-	INCLUDE_DIR["STB"] = "Arcane/vendors/stb"
-	INCLUDE_DIR["SPD_LOG"] = "Arcane/vendors/spdlog/include"
-	INCLUDE_DIR["IMGUI"] = "Arcane/vendors/imgui"
+	ENGINE_INCLUDE_DIR = {}
+	ENGINE_INCLUDE_DIR["GLM"]     = "Grimoire/vendors/Arcane/Arcane/vendors/glm"
+	ENGINE_INCLUDE_DIR["SPD_LOG"] = "Grimoire/vendors/Arcane/Arcane/vendors/spdlog/include"
+	ENGINE_INCLUDE_DIR["IMGUI"]   = "Grimoire/vendors/Arcane/Arcane/vendors/imgui"
+	ENGINE_INCLUDE_DIR["ARCANE"]  = "Grimoire/vendors/Arcane/Arcane/src"
 	
 	group "Dependencies"
-		include "Arcane/vendors/glfw"
-		include "Arcane/vendors/glad"
-		include "Arcane/vendors/imgui"
+		include "Grimoire/vendors/Arcane/Arcane/vendors/glfw"
+		include "Grimoire/vendors/Arcane/Arcane/vendors/glad"
+		include "Grimoire/vendors/Arcane/Arcane/vendors/imgui"
+		include "Grimoire/vendors/Arcane"
 	
 	group ""
 	
-project "Arcane"
-	location "Arcane"
-	kind "StaticLib"
-	language "C++"
-	cppdialect "C++20"
-	staticruntime "on"
-	
-	buildoptions{"/utf-8"}
-	
-	targetdir("bin/" .. OUTPUT_DIR .. "/%{prj.name}")
-	objdir("bin-int/" .. OUTPUT_DIR .. "/%{prj.name}")
-	
-	pchheader "arcpch.h"
-	pchsource "Arcane/src/arcpch.cpp"
-	
-	files 
-	{
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/src/**.c",
-		"%{prj.name}/src/**.hpp",
-		"%{prj.name}/src/**.h"
-	}
-	
-	includedirs 
-	{
-		"%{prj.name}/src",
-		"%{INCLUDE_DIR.GLFW}",
-		"%{INCLUDE_DIR.GLM}",
-		"%{INCLUDE_DIR.GLAD}",
-		"%{INCLUDE_DIR.STB}",
-		"%{INCLUDE_DIR.SPD_LOG}",
-		"%{INCLUDE_DIR.IMGUI}"
-	}
-	
-	links 
-	{
-		"glfw",
-		"glad",
-		"ImGui",
-		"opengl32.lib"
-	}
-
-	defines 
-	{
-		"GLFW_INCLUDE_NONE"
-	}
-	
-	filter "system:windows"
-		systemversion "latest"
-	
-		defines 
-		{
-			"_CRT_SECURE_NO_WARNINGS"
-		}
-		
-	filter "configurations:Debug"
-		defines "ARC_DEBUG"
-		runtime "Debug"
-		symbols "on"
-		
-	filter "configurations:Release"
-		defines "ARC_RELEASE"
-		runtime "Release"
-		optimize "on"
-		
-	filter "configurations:Distribution"
-		defines "ARC_DIST"
-		runtime "Release"
-		optimize "on"
-
 project "Grimoire"
 	location "Grimoire"
 	kind "ConsoleApp"
@@ -114,10 +43,10 @@ project "Grimoire"
 	
 	includedirs 
 	{
-		"Arcane/src",
-		"%{INCLUDE_DIR.SPD_LOG}",
-		"%{INCLUDE_DIR.IMGUI}",
-		"%{INCLUDE_DIR.GLM}",
+		"%{ENGINE_INCLUDE_DIR.ARCANE}",
+		"%{ENGINE_INCLUDE_DIR.SPD_LOG}",
+		"%{ENGINE_INCLUDE_DIR.IMGUI}",
+		"%{ENGINE_INCLUDE_DIR.GLM}",
 	}
 	
 	links {
@@ -142,52 +71,3 @@ project "Grimoire"
 		runtime "Release"
 		optimize "on"
 		
-project "Playground"
-	location "Playground"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++20"
-	staticruntime "on"
-	
-	buildoptions{"/utf-8"}
-	
-	targetdir("bin/" .. OUTPUT_DIR .. "/%{prj.name}")
-	objdir("bin-int/" .. OUTPUT_DIR .. "/%{prj.name}")
-	
-	files 
-	{
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/src/**.c",
-		"%{prj.name}/src/**.hpp",
-		"%{prj.name}/src/**.h"
-	}
-	
-	includedirs 
-	{
-		"Arcane/src",
-		"%{INCLUDE_DIR.SPD_LOG}",
-		"%{INCLUDE_DIR.IMGUI}",
-		"%{INCLUDE_DIR.GLM}",
-	}
-	
-	links {
-		"Arcane"
-	}
-	
-	filter "system:windows"
-		systemversion "latest"
-		
-	filter "configurations:Debug"
-		defines "ARC_DEBUG"
-		runtime "Debug"
-		symbols "on"
-		
-	filter "configurations:Release"
-		defines "ARC_RELEASE"
-		runtime "Release"
-		optimize "on"
-		
-	filter "configurations:Distribution"
-		defines "ARC_DIST"
-		runtime "Release"
-		optimize "on"
