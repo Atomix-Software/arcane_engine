@@ -17,6 +17,7 @@ workspace "ArcaneEngine"
 		include "Grimoire/vendors/Arcane/Arcane/vendors/glfw"
 		include "Grimoire/vendors/Arcane/Arcane/vendors/glad"
 		include "Grimoire/vendors/Arcane/Arcane/vendors/imgui"
+		include "Grimoire/vendors/Arcane/Arcane/vendors/openal-soft"
 		include "Grimoire/vendors/Arcane"
 	
 	group ""
