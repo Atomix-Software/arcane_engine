@@ -10,6 +10,8 @@ workspace "ArcaneEngine"
 	ENGINE_INCLUDE_DIR = {}
 	ENGINE_INCLUDE_DIR["GLM"]     = "Grimoire/vendors/Arcane/Arcane/vendors/glm"
 	ENGINE_INCLUDE_DIR["SPD_LOG"] = "Grimoire/vendors/Arcane/Arcane/vendors/spdlog/include"
+	ENGINE_INCLUDE_DIR["OAL"]   = "Grimoire/vendors/Arcane/Arcane/vendors/openal-soft/include"
+	ENGINE_INCLUDE_DIR["SNDFILE"]   = "Grimoire/vendors/Arcane/Arcane/vendors/libsndfile/include"
 	ENGINE_INCLUDE_DIR["IMGUI"]   = "Grimoire/vendors/Arcane/Arcane/vendors/imgui"
 	ENGINE_INCLUDE_DIR["ARCANE"]  = "Grimoire/vendors/Arcane/Arcane/src"
 	
@@ -17,7 +19,6 @@ workspace "ArcaneEngine"
 		include "Grimoire/vendors/Arcane/Arcane/vendors/glfw"
 		include "Grimoire/vendors/Arcane/Arcane/vendors/glad"
 		include "Grimoire/vendors/Arcane/Arcane/vendors/imgui"
-		include "Grimoire/vendors/Arcane/Arcane/vendors/openal-soft"
 		include "Grimoire/vendors/Arcane"
 	
 	group ""
@@ -47,6 +48,8 @@ project "Grimoire"
 		"%{ENGINE_INCLUDE_DIR.ARCANE}",
 		"%{ENGINE_INCLUDE_DIR.SPD_LOG}",
 		"%{ENGINE_INCLUDE_DIR.IMGUI}",
+		"%{ENGINE_INCLUDE_DIR.OAL}",
+		"%{ENGINE_INCLUDE_DIR.SNDFILE}",
 		"%{ENGINE_INCLUDE_DIR.GLM}",
 	}
 	
@@ -58,17 +61,14 @@ project "Grimoire"
 		systemversion "latest"
 		
 	filter "configurations:Debug"
-		defines "ARC_DEBUG"
 		runtime "Debug"
 		symbols "on"
 		
 	filter "configurations:Release"
-		defines "ARC_RELEASE"
 		runtime "Release"
 		optimize "on"
 		
 	filter "configurations:Distribution"
-		defines "ARC_DIST"
 		runtime "Release"
 		optimize "on"
 		
