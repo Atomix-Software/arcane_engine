@@ -39,6 +39,7 @@ namespace Grimoire
 
 	void EditorLayer::OnDetach()
 	{
+		Arcane::Renderer2D::Shutdown();
 	}
 
 	void EditorLayer::OnUpdate(Arcane::Timestep ts)
@@ -56,13 +57,15 @@ namespace Grimoire
 
 		Arcane::Renderer2D::BeginScene(*m_CamController->GetCamera());
 
-		constexpr int size = 25;
+		constexpr int size = 50;
 		constexpr glm::vec2 scale = { 0.5f, 0.5f };
 		for (int x = 0; x < size; x++)
 		{
 			for (int y = 0; y < size; y++)
 			{
 				glm::vec2 position = { (x * scale.x) - (size * scale.x) / 2, (y * scale.y) - (size * scale.y) / 2 };
+				if (!m_CamController->InBounds(position, scale)) continue;
+
 				if ((x + y) % 2 == 0) Arcane::Renderer2D::DrawQuad(position, scale, m_Grass);
 				else  Arcane::Renderer2D::DrawQuad(position, scale, m_Dirt);
 			}
