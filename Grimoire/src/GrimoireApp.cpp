@@ -11,13 +11,27 @@ namespace Arcane
 		GrimoireApp(const WindowProps& props) :
 			Application(props)
 		{
-			PushLayer(new EditorLayer());
+			m_Editor = new Grimoire::EditorLayer();
+			PushLayer(m_Editor);
 		}
+
+		~GrimoireApp()
+		{
+			Application::~Application();
+			PopLayer(m_Editor);
+		}
+
+	private:
+		Layer* m_Editor;
 	};
 
 	Application* CreateApplication()
 	{
-		return new GrimoireApp({ "Arcane Grimoire Editor" });
+		WindowProps props;
+		props.Title = "Arcane Engine";
+		props.Resizable = true;
+
+		return new GrimoireApp(props);
 	}
 
 }

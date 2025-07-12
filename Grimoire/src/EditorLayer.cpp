@@ -2,7 +2,7 @@
 
 #include <imgui.h>
 
-namespace Arcane
+namespace Grimoire
 {
 
 	EditorLayer::EditorLayer() :
@@ -10,7 +10,7 @@ namespace Arcane
 	{
 		uint32_t width = Arcane::Application::Get().GetWindow()->GetWidth();
 		uint32_t height = Arcane::Application::Get().GetWindow()->GetHeight();
-		m_CamController = new Arcane::OrthoCameraController((float)width / (float)height);
+		m_CamController = Arcane::CreateShared<Arcane::OrthoCameraController>((float)width / (float)height);
 
 		m_ViewportFocused = false;
 		m_ViewportHovered = false;
@@ -20,6 +20,9 @@ namespace Arcane
 	void EditorLayer::OnAttach()
 	{
 		ARC_PROFILE_FUNCTION();
+
+		Arcane::Renderer2D::Init();
+
 		m_Spritesheet = Arcane::Texture2D::Create("assets/textures/blocks.png");
 
 		m_Dirt = Arcane::SubTexture2D::CreateFromCoords(m_Spritesheet, { 2, 15 }, { 16, 16 });
@@ -38,7 +41,7 @@ namespace Arcane
 	{
 	}
 
-	void EditorLayer::OnUpdate(Timestep ts)
+	void EditorLayer::OnUpdate(Arcane::Timestep ts)
 	{
 		ARC_PROFILE_FUNCTION();
 
@@ -69,7 +72,7 @@ namespace Arcane
 		m_Framebuffer->Unbind();
 	}
 
-	void EditorLayer::OnEvent(Event& e)
+	void EditorLayer::OnEvent(Arcane::Event& e)
 	{
 		m_CamController->OnEvent(e);
 	}
@@ -107,6 +110,7 @@ namespace Arcane
 		if (opt_fullscreen)
 			ImGui::PopStyleVar(2);
 
+		// Setting ImGui up to use Docking
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
@@ -130,7 +134,7 @@ namespace Arcane
 		{
 			m_ViewportFocused = ImGui::IsWindowFocused();
 			m_ViewportHovered = ImGui::IsWindowHovered();
-			Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+			Arcane::Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
 			uint32_t textureID = m_Framebuffer->GetColorAttRendererID();
 			ImVec2 viewportSize = ImGui::GetContentRegionAvail();
@@ -145,7 +149,7 @@ namespace Arcane
 			ImGui::Image(textureID, *((ImVec2*)&m_ViewportSize), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
 		}
 		else {
-			Application::Get().GetImGuiLayer()->BlockEvents(true);
+			Arcane::Application::Get().GetImGuiLayer()->BlockEvents(true);
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();

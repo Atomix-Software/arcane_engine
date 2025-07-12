@@ -2,9 +2,9 @@
 
 #include <Arcane.h>
 
-namespace Arcane
+namespace Grimoire
 {
-	class EditorLayer : public Layer
+	class EditorLayer : public Arcane::Layer
 	{
 	public:
 		EditorLayer();
@@ -14,11 +14,11 @@ namespace Arcane
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
 
-		virtual void OnUpdate(Timestep ts) override;
-		virtual void OnEvent(Event& e) override;
+		virtual void OnUpdate(Arcane::Timestep ts) override;
+		virtual void OnEvent(Arcane::Event& e) override;
 
 	private:
-		Arcane::OrthoCameraController* m_CamController;
+		Arcane::Shared<Arcane::OrthoCameraController> m_CamController;
 		Arcane::Shared<Arcane::Texture2D> m_Spritesheet;
 		Arcane::Shared <Arcane::Framebuffer> m_Framebuffer;
 
