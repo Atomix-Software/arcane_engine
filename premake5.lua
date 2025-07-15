@@ -51,10 +51,15 @@ project "Grimoire"
 		"%{ENGINE_INCLUDE_DIR.OAL}",
 		"%{ENGINE_INCLUDE_DIR.SNDFILE}",
 		"%{ENGINE_INCLUDE_DIR.GLM}",
+		"%{prj.name}/src/vendors"
 	}
 	
 	links {
-		"Arcane"
+		"Arcane",
+		"comdlg32.lib",
+		"ole32.lib",
+		"user32.lib",
+		"shell32.lib"
 	}
 	
 	filter "system:windows"
