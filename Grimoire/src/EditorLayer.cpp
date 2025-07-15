@@ -45,6 +45,9 @@ namespace Grimoire
 	{
 		ARC_PROFILE_FUNCTION();
 
+		ImGuiIO& io = ImGui::GetIO();
+		io.IniFilename = "Grimoire.ini";
+
 		Arcane::Renderer2D::Init();
 
 		m_Assets = Arcane::CreateUnique<AssetExplorer>();
