@@ -2,6 +2,8 @@
 
 #include <Arcane.h>
 
+#include "editor/AssetExplorer.h"
+
 namespace Grimoire
 {
 	class EditorLayer : public Arcane::Layer
@@ -18,11 +20,10 @@ namespace Grimoire
 		virtual void OnEvent(Arcane::Event& e) override;
 
 	private:
-		Arcane::Shared<Arcane::OrthoCameraController> m_CamController;
-		Arcane::Shared<Arcane::Texture2D> m_Spritesheet;
-		Arcane::Shared <Arcane::Framebuffer> m_Framebuffer;
+		Arcane::Unique<AssetExplorer> m_Assets;
 
-		Arcane::Shared<Arcane::SubTexture2D> m_Dirt, m_Grass;
+		Arcane::Shared<Arcane::OrthoCameraController> m_EditorCamera;
+		Arcane::Shared <Arcane::Framebuffer> m_Framebuffer;
 
 		bool m_ViewportFocused, m_ViewportHovered;
 		glm::vec2 m_ViewportSize;

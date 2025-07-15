@@ -10,7 +10,7 @@ namespace Grimoire
 	{
 		uint32_t width = Arcane::Application::Get().GetWindow()->GetWidth();
 		uint32_t height = Arcane::Application::Get().GetWindow()->GetHeight();
-		m_CamController = Arcane::CreateShared<Arcane::OrthoCameraController>((float)width / (float)height);
+		m_EditorCamera = Arcane::CreateShared<Arcane::OrthoCameraController>((float)width / (float)height);
 
 		m_ViewportFocused = false;
 		m_ViewportHovered = false;
@@ -23,10 +23,7 @@ namespace Grimoire
 
 		Arcane::Renderer2D::Init();
 
-		m_Spritesheet = Arcane::Texture2D::Create("assets/textures/blocks.png");
-
-		m_Dirt = Arcane::SubTexture2D::CreateFromCoords(m_Spritesheet, { 2, 15 }, { 16, 16 });
-		m_Grass = Arcane::SubTexture2D::CreateFromCoords(m_Spritesheet, { 0, 15 }, { 16, 16 });
+		m_Assets = Arcane::CreateUnique<AssetExplorer>("assets/");
 
 		uint32_t width = Arcane::Application::Get().GetWindow()->GetWidth();
 		uint32_t height = Arcane::Application::Get().GetWindow()->GetHeight();
@@ -47,7 +44,7 @@ namespace Grimoire
 		ARC_PROFILE_FUNCTION();
 
 		if(m_ViewportFocused)
-			m_CamController->OnUpdate(ts);
+			m_EditorCamera->OnUpdate(ts);
 
 		Arcane::Renderer2D::ResetStats();
 
@@ -55,21 +52,7 @@ namespace Grimoire
 		Arcane::RenderCMD::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 		Arcane::RenderCMD::Clear(true);
 
-		Arcane::Renderer2D::BeginScene(*m_CamController->GetCamera());
-
-		constexpr int size = 50;
-		constexpr glm::vec2 scale = { 0.5f, 0.5f };
-		for (int x = 0; x < size; x++)
-		{
-			for (int y = 0; y < size; y++)
-			{
-				glm::vec2 position = { (x * scale.x) - (size * scale.x) / 2, (y * scale.y) - (size * scale.y) / 2 };
-				if (!m_CamController->InBounds(position, scale)) continue;
-
-				if ((x + y) % 2 == 0) Arcane::Renderer2D::DrawQuad(position, scale, m_Grass);
-				else  Arcane::Renderer2D::DrawQuad(position, scale, m_Dirt);
-			}
-		}
+		Arcane::Renderer2D::BeginScene(*m_EditorCamera->GetCamera());
 
 		Arcane::Renderer2D::EndScene();
 		m_Framebuffer->Unbind();
@@ -77,7 +60,7 @@ namespace Grimoire
 
 	void EditorLayer::OnEvent(Arcane::Event& e)
 	{
-		m_CamController->OnEvent(e);
+		m_EditorCamera->OnEvent(e);
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -145,7 +128,7 @@ namespace Grimoire
 			if (m_ViewportSize != *((glm::vec2*)&viewportSize) && (viewportSize.x > 0 && viewportSize.y > 0))
 			{
 				m_ViewportSize = { viewportSize.x, viewportSize.y };
-				m_CamController->OnResize(m_ViewportSize.x, m_ViewportSize.y);
+				m_EditorCamera->OnResize(m_ViewportSize.x, m_ViewportSize.y);
 				m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			}
 
@@ -156,6 +139,16 @@ namespace Grimoire
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
+
+		ImGui::Begin("Scene");
+		// TODO: Implement Scene Editor Window
+		ImGui::End();
+
+		m_Assets->ImGui();
+
+		ImGui::Begin("Inspector"); 
+		
+		ImGui::End();
 
 		ImGui::Begin("2D Renderer Stats");
 		Arcane::Renderer2D::Statistics stats = Arcane::Renderer2D::GetStats();
