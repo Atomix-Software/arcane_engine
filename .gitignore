@@ -12,13 +12,13 @@ bin-int/
 *.xcf
 
 # ImGui Generated Files
-imgui.ini
-imgui*.ini
+Grimoire.ini
+Grimoire*.ini
 
 # Log Files
 .log
-Grimoire.log
-Grimoire*.log
+Arcane.log
+Arcane*.log
 
 # Profiling Files
 *Profile-*.json
