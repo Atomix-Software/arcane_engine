@@ -2,8 +2,32 @@
 
 #include <imgui.h>
 
+#include <tinyfiledialogs.h>
+#include <tinyxml/tinyxml2.h>
+
 namespace Grimoire
 {
+	void LoadProject(const std::string& filepath, std::string& outName, std::string& outAssetsPath, std::string& outScriptsPath)
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(filepath.c_str()) != tinyxml2::XML_SUCCESS)
+		{
+			ARC_ERROR("Failed to load project file: {0}", filepath);
+			return;
+		}
+
+		auto* root = doc.FirstChildElement("Project");
+		if (!root) return;
+
+		const char* nameAttr = root->Attribute("name");
+		if (nameAttr) outName = nameAttr;
+
+		if (auto* assets = root->FirstChildElement("Assets"))
+			outAssetsPath = assets->GetText() ? assets->GetText() : "";
+
+		if (auto* scripts = root->FirstChildElement("Scripts"))
+			outScriptsPath = scripts->GetText() ? scripts->GetText() : "";
+	}
 
 	EditorLayer::EditorLayer() :
 		Layer("EditorLayer")
@@ -23,7 +47,7 @@ namespace Grimoire
 
 		Arcane::Renderer2D::Init();
 
-		m_Assets = Arcane::CreateUnique<AssetExplorer>("assets/");
+		m_Assets = Arcane::CreateUnique<AssetExplorer>();
 
 		uint32_t width = Arcane::Application::Get().GetWindow()->GetWidth();
 		uint32_t height = Arcane::Application::Get().GetWindow()->GetHeight();
@@ -67,6 +91,7 @@ namespace Grimoire
 	{
 		ARC_PROFILE_FUNCTION();
 
+#pragma region Dockspace Set Up
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen_persistent = true;
 		bool opt_fullscreen = opt_fullscreen_persistent;
@@ -103,17 +128,136 @@ namespace Grimoire
 			ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+#pragma endregion
 
+		static char projectName[128] = "NewProject";
+		static std::string selectedDirectory = "";
+		static bool openedDialog = false;
+		static bool triggerNewProjectPopup = false;
+
+
+#pragma region Menu Bar
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Exit")) Arcane::Application::Get().Stop();
+				if (ImGui::MenuItem("New Project"))
+					triggerNewProjectPopup = true;
+
+				if (ImGui::MenuItem("Open Project"))
+				{
+					const char* filters[] = { "*.arcproj" };
+					const char* path = tinyfd_openFileDialog("Open .arcproj", "", 1, filters, "Arcane Project", 0);
+					if (path)
+					{
+						std::string projectNameFromFile, assetsFromFile, scriptsFromFile;
+						LoadProject(path, projectNameFromFile, assetsFromFile, scriptsFromFile);
+
+						if (!assetsFromFile.empty() && !scriptsFromFile.empty())
+						{
+							std::filesystem::path projDir = std::filesystem::path(path).parent_path();
+							m_Assets->SetNewRoot(projDir.string());
+							ARC_INFO("Loaded project: {0} at {1}", projectNameFromFile, path);
+						}
+					}
+				}
+
+				if (ImGui::MenuItem("Close Project"))
+				{
+					if (!m_Assets->GetRootDir().empty())
+					{
+						std::string rootDir = m_Assets->GetRootDir();
+						m_Assets->SetNewRoot("");
+						ARC_INFO("Closed project: {0}", rootDir.substr(rootDir.find_last_of('\\') + 1, rootDir.size()));
+					}
+				}
+
+				if (ImGui::MenuItem("Exit"))
+					Arcane::Application::Get().Stop();
+
 				ImGui::EndMenu();
 			}
 
 			ImGui::EndMenuBar();
 		}
+
+		if (triggerNewProjectPopup) 
+		{
+			strcpy_s(projectName, "NewProject");
+			selectedDirectory.clear();
+			ImGui::OpenPopup("New Project");
+
+			triggerNewProjectPopup = false;
+		}
+#pragma endregion
+
+
+#pragma region New Project Window
+		ImGui::SetNextWindowSize(ImVec2(400, 200));
+		ImGui::SetNextWindowFocus();
+
+		if (ImGui::BeginPopupModal("New Project", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::InputText("Project Name", projectName, IM_ARRAYSIZE(projectName));
+
+			if (ImGui::Button("Select Folder"))
+			{
+				const char* folder = tinyfd_selectFolderDialog("Choose Project Location", "");
+				if (folder)
+					selectedDirectory = folder;
+			}
+
+			ImGui::SameLine();
+			ImGui::Text("%s", selectedDirectory.empty() ? "No directory selected." : selectedDirectory.c_str());
+
+			if (ImGui::Button("Create"))
+			{
+				if (strlen(projectName) > 0 && !selectedDirectory.empty())
+				{
+					std::filesystem::path projectDir = std::filesystem::path(selectedDirectory) / projectName;
+					std::filesystem::create_directories(projectDir);
+
+					std::filesystem::path assetsDir = projectDir / "assets";
+					std::filesystem::create_directories(assetsDir);
+
+					std::filesystem::path scriptDir = projectDir / "scripts";
+					std::filesystem::create_directories(scriptDir);
+
+					std::filesystem::path projFile = projectDir / (std::string(projectName) + ".arcproj");
+
+					tinyxml2::XMLDocument doc;
+					auto* decl = doc.NewDeclaration();
+					doc.InsertFirstChild(decl);
+
+					auto* root = doc.NewElement("Project");
+					root->SetAttribute("name", projectName);
+					doc.InsertEndChild(root);
+
+					auto* assets = doc.NewElement("Assets");
+					assets->SetText("assets");
+					root->InsertEndChild(assets);
+
+					auto* scripts = doc.NewElement("Scripts");
+					scripts->SetText("scripts");
+					root->InsertEndChild(scripts);
+
+					doc.SaveFile(projFile.string().c_str());
+
+					ARC_INFO("Created new project at: {0}", projFile.string());
+
+					ImGui::CloseCurrentPopup();
+					m_Assets->SetNewRoot(projectDir.string());
+				}
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+				ImGui::CloseCurrentPopup();
+
+			ImGui::EndPopup();
+		}
+
+#pragma endregion
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
 		if (ImGui::Begin("Viewport"))

@@ -6,30 +6,32 @@
 
 namespace Grimoire
 {
-    AssetExplorer::AssetExplorer(std::string projectDir) :
-        m_Loaded(false)
+    AssetExplorer::AssetExplorer() :
+        m_Loaded(true)
     {
-        m_RootDir = projectDir;
-        m_CurrentDir = projectDir;
-
-        Update();
+        m_RootDir = "";
+        m_CurrentDir = "";
     }
 
-	AssetExplorer::~AssetExplorer()
-	{
-
-	}
+	AssetExplorer::~AssetExplorer() = default;
 
 	void AssetExplorer::Update()
 	{
-        namespace fs = std::filesystem;
-        fs::path currPath = fs::path(m_CurrentDir).lexically_normal();
+		namespace fs = std::filesystem;
 
         m_Directories.clear();
         m_Files.clear();
 
+		if (m_CurrentDir.empty() || m_RootDir.empty())
+		{
+			m_Loaded = true;
+			return;
+		}
+
         try
         {
+			fs::path currPath = fs::path(m_CurrentDir).lexically_normal();
+
             for (const auto& entry : fs::directory_iterator{ currPath })
             {
                 const auto& path = entry.path();
@@ -37,9 +39,17 @@ namespace Grimoire
                 std::string fullPath = path.lexically_normal().string();
 
                 if (entry.is_directory())
-                    m_Directories.emplace(name, fullPath);
+				{
+					m_Directories.emplace(name, fullPath);
+				}
                 else if (entry.is_regular_file())
-                    m_Files.emplace(name, fullPath);
+				{
+					std::string ext = std::filesystem::path(fullPath).extension().string();
+					std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+					if (ext == ".arcproj") continue;
+
+					m_Files.emplace(name, fullPath);
+				}
             }
         }
         catch (const fs::filesystem_error& ex)
@@ -52,6 +62,8 @@ namespace Grimoire
 
 	void AssetExplorer::ImGui()
 	{
+		if (!m_Loaded) Update();
+
 		namespace fs = std::filesystem;
 
 		fs::path currentPath = fs::path(m_CurrentDir).lexically_normal();
@@ -60,75 +72,70 @@ namespace Grimoire
 		ImGui::Begin("Assets");
 		bool clickedSomething = false;
 
-		if (m_Loaded)
+		// Only show back button if current path is NOT root
+		if (!(rootPath.empty() || currentPath.empty()) && !fs::equivalent(currentPath, rootPath))
 		{
-			// Only show back button if current path is NOT root
-			if (!fs::equivalent(currentPath, rootPath))
+			if (ImGui::Button("\\"))
 			{
-				if (ImGui::Button("\\"))
+				fs::path parent = currentPath.parent_path().lexically_normal();
+
+				// Prevent navigating above project root
+				if (fs::equivalent(parent, rootPath) || parent.string().starts_with(rootPath.string()))
 				{
-					fs::path parent = currentPath.parent_path().lexically_normal();
-
-					// Prevent navigating above project root
-					if (fs::equivalent(parent, rootPath) || parent.string().starts_with(rootPath.string()))
-					{
-						m_CurrentDir = parent.string();
-						m_Loaded = false;
-						Update();
-
-						ImGui::End();
-						return;
-					}
-				}
-			}
-
-			// Show directory buttons
-			for (auto& [dirName, fullPath] : m_Directories)
-			{
-				std::string label = dirName + "\\";
-				if (ImGui::Button(label.c_str()))
-				{
-					m_CurrentDir = fs::path(fullPath).lexically_normal().string();
+					m_CurrentDir = parent.string();
 					m_Loaded = false;
-					Update();
 
 					ImGui::End();
 					return;
 				}
-
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
-					clickedSomething = true;
 			}
+		}
 
-			// Show file names
-			for (auto& [fileName, fullPath] : m_Files)
+		// Show directory buttons
+		for (auto& [dirName, fullPath] : m_Directories)
+		{
+			std::string label = dirName + "\\";
+			if (ImGui::Button(label.c_str()))
 			{
-				bool selected = (m_Selection.FullPath == fullPath);
-				if (ImGui::Selectable(fileName.c_str(), selected))
-				{
-					m_Selection = {
-						fileName,
-						fullPath,
-						// Detect type (basic extension check)
-						[](const std::string& ext) -> AssetType {
-							std::string lowerExt = ext;
-							std::transform(lowerExt.begin(), lowerExt.end(), lowerExt.begin(), ::tolower);
+				m_CurrentDir = fs::path(fullPath).lexically_normal().string();
+				m_Loaded = false;
 
-							if (lowerExt == ".png"  || lowerExt == ".jpg"  || lowerExt == ".jpeg") return Image;
-							if (lowerExt == ".wav"  || lowerExt == ".ogg"  || lowerExt == ".mp3")  return Audio;
-							if (lowerExt == ".txt"  || lowerExt == ".json" || lowerExt == ".xml"    || lowerExt == ".ini")  return Text;
-							if (lowerExt == ".vert" || lowerExt == ".frag" || lowerExt == ".shader" || lowerExt == ".glsl" || lowerExt == ".hlsl") return Shader;
-							if (lowerExt == ".obj"  || lowerExt == ".fbx"  || lowerExt == ".gltf"   || lowerExt == ".glb"  || lowerExt == ".dae" || lowerExt == ".3ds" || lowerExt == ".blend" || lowerExt == ".stl") return Model;
-							return Unsupported;
-						}(std::filesystem::path(fullPath).extension().string())
-					};
-
-					clickedSomething = true;
-				}
-
-				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
-					clickedSomething = true;
+				ImGui::End();
+				return;
 			}
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+				clickedSomething = true;
+		}
+
+		// Show file names
+		for (auto& [fileName, fullPath] : m_Files)
+		{
+			bool selected = (m_Selection.FullPath == fullPath);
+			if (ImGui::Selectable(fileName.c_str(), selected))
+			{
+				m_Selection = {
+					fileName,
+					fullPath,
+					// Detect type (basic extension check)
+					[](const std::string& ext) -> AssetType {
+						std::string lowerExt = ext;
+						std::transform(lowerExt.begin(), lowerExt.end(), lowerExt.begin(), ::tolower);
+
+						if (lowerExt == ".png" || lowerExt == ".jpg" || lowerExt == ".jpeg") return Image;
+						if (lowerExt == ".wav" || lowerExt == ".ogg" || lowerExt == ".mp3")  return Audio;
+						if (lowerExt == ".txt" || lowerExt == ".json" || lowerExt == ".xml" || lowerExt == ".ini")  return Text;
+						if (lowerExt == ".vert" || lowerExt == ".frag" || lowerExt == ".shader" || lowerExt == ".glsl" || lowerExt == ".hlsl") return Shader;
+						if (lowerExt == ".obj" || lowerExt == ".fbx" || lowerExt == ".gltf" || lowerExt == ".glb" || lowerExt == ".dae" || lowerExt == ".3ds" || lowerExt == ".blend" || lowerExt == ".stl") return Model;
+						return Unsupported;
+					}(std::filesystem::path(fullPath).extension().string())
+				};
+
+				clickedSomething = true;
+			}
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0))
+				clickedSomething = true;
 		}
 		
 		// Clear selection if clicking on background

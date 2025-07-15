@@ -25,10 +25,17 @@ namespace Grimoire
 	class AssetExplorer
 	{
 	public:
-		AssetExplorer(std::string projectDir);
+		AssetExplorer();
 		~AssetExplorer();
 
 		void ImGui();
+
+		inline void SetNewRoot(std::string rootDir) 
+		{ 
+			m_RootDir = rootDir; 
+			m_CurrentDir = rootDir;
+			m_Loaded = false;
+		}
 
 		inline const std::string GetCurrentDir() const { return m_CurrentDir; }
 		inline const std::string GetRootDir() const { return m_RootDir; }
