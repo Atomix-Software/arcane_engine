@@ -24,8 +24,17 @@ project "arcane"
 		"%{prj.name}/src/**.h"
     }
 
+    includedirs {
+        "%{prj.name}/vendors/spdlog/include"
+    }
+
     defines {
-        "ARC_BUILD_DLL"
+        "AE_BUILD_DLL"
+    }
+
+    postbuildcommands
+    {
+        ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. OUTPUT_DIR .. "/sandbox")
     }
 
 filter "system:windows"
@@ -35,18 +44,18 @@ filter "system:windows"
     
     defines {
     	"_CRT_SECURE_NO_WARNINGS",
-        "ARC_PLAT_WINDOWS"
+        "AE_PLAT_WINDOWS"
     }
 		
 filter "configurations:Debug"
 	runtime "Debug"
 	symbols "on"
-    defines "ARC_DEBUG"
+    defines "AE_DEBUG"
 	
 filter "configurations:Release"
 	runtime "Release"
 	optimize "on"
-    defines "ARC_RELEASE"
+    defines "AE_RELEASE"
 
 project "sandbox"
     location "sandbox"
@@ -66,16 +75,12 @@ project "sandbox"
     }
 
     includedirs {
-        "arcane/src"
+        "arcane/src",
+        "arcane/vendors/spdlog/include"
     }
 
     links {
         "arcane"
-    }
-
-    postbuildcommands
-    {
-        ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. OUTPUT_DIR .. "/%{prj.name}")
     }
 
 filter "system:windows"
@@ -85,15 +90,15 @@ filter "system:windows"
     
     defines {
     	"_CRT_SECURE_NO_WARNINGS",
-        "ARC_PLAT_WINDOWS"
+        "AE_PLAT_WINDOWS"
     }
 		
 filter "configurations:Debug"
 	runtime "Debug"
 	symbols "on"
-    defines "ARC_DEBUG"
+    defines "AE_DEBUG"
 	
 filter "configurations:Release"
 	runtime "Release"
 	optimize "on"
-    defines "ARC_RELEASE"
+    defines "AE_RELEASE"

@@ -1,0 +1,3 @@
+[submodule "arcane/vendors/spdlog"]
+	path = arcane/vendors/spdlog
+	url = https://github.com/gabime/spdlog.git

@@ -4,7 +4,7 @@
 
 namespace Arcane {
 
-	class ARC_API Application {
+	class AE_API Application {
 	public:
 		Application();
 		virtual ~Application();
