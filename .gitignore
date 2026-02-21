@@ -1,0 +1,15 @@
+# Build Output Dirs
+bin/
+bin-int/
+
+# Visual Studio artifacts
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.slnx
+.vs/
+
+# Misc IDE stuffs
+.vscode/
+.idea/
