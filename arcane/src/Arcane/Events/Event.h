@@ -1,9 +1,7 @@
 #pragma once
 
+#include "aepch.h"
 #include "Arcane/Core/Base.h"
-
-#include <string>
-#include <sstream>
 
 namespace Arcane
 {
