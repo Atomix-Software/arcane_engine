@@ -8,9 +8,19 @@
 	#else
 		#define AE_API __declspec(dllimport)
 	#endif
+
+	#ifdef AE_DEBUG
+		#define AE_DEBUGBREAK() __debugbreak()
+		#define AE_ENABLE_ASSERTS
+	#else
+		#define AE_DEBUGBREAK()
+	#endif
 #else
 	#error Arcane Engine currently only supports Windows!
 #endif
+
+#define AE_EXPAND_MACRO(x) x
+#define AE_STRINGIFY_MACRO(x) #x
 
 #define BIT(x) (1 << x)
 
@@ -37,3 +47,6 @@ namespace Arcane {
 	}
 
 }
+
+#include "Arcane/Core/Log.h"
+#include "Arcane/Core/Assert.h"
