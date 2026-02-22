@@ -1,4 +1,7 @@
+#include "aepch.h"
 #include "Log.h"
+
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace Arcane
 {

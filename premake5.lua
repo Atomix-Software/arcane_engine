@@ -17,6 +17,9 @@ project "arcane"
     targetdir("bin/" .. OUTPUT_DIR .. "/%{prj.name}")
     objdir("bin-int/" .. OUTPUT_DIR .. "/%{prj.name}")
 
+    pchheader "aepch.h"
+    pchsource "arcane/src/aepch.cpp"
+
     files {
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/src/**.c",
@@ -25,6 +28,7 @@ project "arcane"
     }
 
     includedirs {
+        "arcane/src",
         "%{prj.name}/vendors/spdlog/include"
     }
 
@@ -39,7 +43,7 @@ project "arcane"
 
 filter "system:windows"
     systemversion "latest"
-    cppdialect "C++20"
+    cppdialect "C++17"
     staticruntime "on"
     
     defines {
@@ -85,7 +89,7 @@ project "sandbox"
 
 filter "system:windows"
     systemversion "latest"
-    cppdialect "C++20"
+    cppdialect "C++17"
     staticruntime "on"
     
     defines {
