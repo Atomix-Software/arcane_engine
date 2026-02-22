@@ -3,9 +3,16 @@ workspace "arcane_engine"
     architecture "x64"
     configurations { "Debug", "Release" }
 
+    startproject "sandbox"
+
     OUTPUT_DIR = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-    startproject "arcane"
+    IncludeDir = {}
+    IncludeDir["spdlog"] = "arcane/vendors/spdlog/include/"
+    IncludeDir["GLFW"] = "arcane/vendors/glfw/include/"
+    IncludeDir["GLM"]  = "arcane/vendors/glm/"
+
+    include "arcane/vendors/glfw"
 
 project "arcane"
     location "arcane"
@@ -29,7 +36,14 @@ project "arcane"
 
     includedirs {
         "arcane/src",
-        "%{prj.name}/vendors/spdlog/include"
+        "%{IncludeDir.spdlog}",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLM}",
+    }
+
+    links {
+        "glfw",
+        "opengl32.lib"
     }
 
     defines {
@@ -43,7 +57,7 @@ project "arcane"
 
 filter "system:windows"
     systemversion "latest"
-    cppdialect "C++17"
+    cppdialect "C++20"
     staticruntime "on"
     
     defines {
@@ -80,7 +94,7 @@ project "sandbox"
 
     includedirs {
         "arcane/src",
-        "arcane/vendors/spdlog/include"
+        "%{IncludeDir.spdlog}",
     }
 
     links {
@@ -89,7 +103,7 @@ project "sandbox"
 
 filter "system:windows"
     systemversion "latest"
-    cppdialect "C++17"
+    cppdialect "C++20"
     staticruntime "on"
     
     defines {

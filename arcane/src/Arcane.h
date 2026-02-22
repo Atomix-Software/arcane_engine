@@ -6,6 +6,7 @@
 
 #include "Arcane/Core/Application.h"
 #include "Arcane/Core/Log.h"
+#include "Arcane/Core/Assert.h"
 
 #include "Arcane/Core/KeyCodes.h"
 #include "Arcane/Core/MouseCodes.h"
