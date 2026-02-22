@@ -57,7 +57,7 @@ namespace Arcane
 	public:
 		MouseCode GetMouseButton() const { return m_Button; }
 
-		EVENT_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton)
+		EVENT_CATEGORY(MouseInput | Input | MouseButton)
 	protected:
 		MouseButtonEvent(const MouseCode button)
 			: m_Button(button) {
