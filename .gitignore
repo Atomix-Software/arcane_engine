@@ -13,3 +13,6 @@ bin-int/
 # Misc IDE stuffs
 .vscode/
 .idea/
+
+# ImGui config
+imgui.ini

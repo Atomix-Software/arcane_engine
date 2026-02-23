@@ -12,14 +12,17 @@ workspace "arcane_engine"
     IncludeDir["GLFW"] = "arcane/vendors/glfw/include/"
     IncludeDir["GLAD"] = "arcane/vendors/glad/include/"
     IncludeDir["GLM"]  = "arcane/vendors/glm/"
+    IncludeDir["IMGUI"]  = "arcane/vendors/imgui/"
 
     include "arcane/vendors/glfw"
     include "arcane/vendors/glad"
+    include "arcane/vendors/imgui"
 
 project "arcane"
     location "arcane"
     kind "SharedLib"
     language "C++"
+    staticruntime "off"
 
     buildoptions { "/utf-8" }
 
@@ -42,11 +45,13 @@ project "arcane"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.GLM}",
+        "%{IncludeDir.IMGUI}"
     }
 
     links {
         "glfw",
         "glad",
+        "imgui",
         "opengl32.lib"
     }
 
@@ -57,13 +62,12 @@ project "arcane"
 
     postbuildcommands
     {
-        ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. OUTPUT_DIR .. "/sandbox")
+        ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. OUTPUT_DIR .. "/sandbox/\"")
     }
 
 filter "system:windows"
     systemversion "latest"
     cppdialect "C++20"
-    staticruntime "on"
     
     defines {
     	"_CRT_SECURE_NO_WARNINGS",
@@ -72,13 +76,11 @@ filter "system:windows"
 		
 filter "configurations:Debug"
 	runtime "Debug"
-    buildoptions "/MDd"
 	symbols "on"
     defines "AE_DEBUG"
 	
 filter "configurations:Release"
 	runtime "Release"
-    buildoptions "/MD"
 	optimize "on"
     defines "AE_RELEASE"
 
@@ -86,6 +88,7 @@ project "sandbox"
     location "sandbox"
     kind "ConsoleApp"
     language "C++"
+    staticruntime "off"
 
     buildoptions { "/utf-8" }
 
@@ -102,6 +105,7 @@ project "sandbox"
     includedirs {
         "arcane/src",
         "%{IncludeDir.spdlog}",
+        "%{IncludeDir.GLM}"
     }
 
     links {
@@ -111,7 +115,6 @@ project "sandbox"
 filter "system:windows"
     systemversion "latest"
     cppdialect "C++20"
-    staticruntime "on"
     
     defines {
     	"_CRT_SECURE_NO_WARNINGS",
@@ -120,12 +123,10 @@ filter "system:windows"
 		
 filter "configurations:Debug"
 	runtime "Debug"
-    buildoptions "/MDd"
 	symbols "on"
     defines "AE_DEBUG"
 	
 filter "configurations:Release"
 	runtime "Release"
-    buildoptions "/MD"
 	optimize "on"
     defines "AE_RELEASE"
