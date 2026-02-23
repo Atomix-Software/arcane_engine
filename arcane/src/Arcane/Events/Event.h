@@ -19,7 +19,7 @@ namespace Arcane
 	{
 		None = 0,
 		App			= BIT(0),
-		Input		= BIT(1),
+		UserInput		= BIT(1),
 		Keyboard	= BIT(2),
 		MouseInput	= BIT(3),
 		MouseButton = BIT(4)

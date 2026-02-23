@@ -11,7 +11,7 @@ namespace Arcane
 	public:
 		KeyCode GetKeyCode() const { return m_KeyCode; }
 
-		EVENT_CATEGORY(Keyboard | Input)
+		EVENT_CATEGORY(Keyboard | UserInput)
 	protected:
 		KeyEvent(const KeyCode keycode)
 			: m_KeyCode(keycode) {

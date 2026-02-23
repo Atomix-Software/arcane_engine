@@ -24,7 +24,7 @@ namespace Arcane
 		}
 
 		EVENT_TYPE(MouseMoved)
-		EVENT_CATEGORY(MouseInput | Input)
+		EVENT_CATEGORY(MouseInput | UserInput)
 	private:
 		float m_MouseX, m_MouseY;
 	};
@@ -47,7 +47,7 @@ namespace Arcane
 		}
 
 		EVENT_TYPE(MouseScrolled)
-		EVENT_CATEGORY(MouseInput | Input)
+		EVENT_CATEGORY(MouseInput | UserInput)
 	private:
 		float m_XOffset, m_YOffset;
 	};
@@ -57,7 +57,7 @@ namespace Arcane
 	public:
 		MouseCode GetMouseButton() const { return m_Button; }
 
-		EVENT_CATEGORY(MouseInput | Input | MouseButton)
+		EVENT_CATEGORY(MouseInput | UserInput | MouseButton)
 	protected:
 		MouseButtonEvent(const MouseCode button)
 			: m_Button(button) {
