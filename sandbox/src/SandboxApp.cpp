@@ -1,5 +1,7 @@
 #include <Arcane.h>
 
+#include <imgui.h>
+
 class SandboxLayer : public Arcane::Layer
 {
 public:
@@ -11,12 +13,17 @@ public:
 
 	void OnUpdate() override
 	{
-		AE_INFO("{0}::Update", GetName());
+
+	}
+
+	void OnImGuiRender() override
+	{
+
 	}
 
 	void OnEvent(Arcane::Event& event) override
 	{
-		AE_TRACE(event.ToString());
+
 	}
 };
 

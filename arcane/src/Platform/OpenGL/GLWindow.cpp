@@ -101,6 +101,13 @@ namespace Arcane
 				}
 			});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* handle, unsigned int keycode)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(handle);
+				KeyTypedEvent event(keycode);
+				data.EventCallback(event);
+			});
+
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* handle, int button, int action, int mods)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(handle);

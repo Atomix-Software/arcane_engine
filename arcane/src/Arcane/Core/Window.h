@@ -35,6 +35,8 @@ namespace Arcane
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool UseVSync() const = 0;
 
+		virtual void* GetNativeWindow() const = 0;
+
 		static Window* Create(const WindowProps& properties = WindowProps());
 	};
 

@@ -1,20 +1,36 @@
 #include "aepch.h"
 #include "Application.h"
 
+#include <glad/glad.h>
+
 namespace Arcane {
+
+	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
 	{
+		AE_CORE_ASSERT(!s_Instance, "Application already exists!");
+		s_Instance = this;
 		m_Window = Unique<Window>(Window::Create());
 		m_Window->SetEventCallback(AE_BIND_EVENT(Application::OnEvent));
+
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
 	}
 
 	void Application::Run()
 	{
+		glClearColor(0, 0, 0, 1);
 		while (m_Running)
 		{
+			glClear(GL_COLOR_BUFFER_BIT);
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			m_ImGuiLayer->Begin();
+			for (Layer* layer : m_LayerStack)
+				layer->OnImGuiRender();
+			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}

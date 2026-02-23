@@ -105,7 +105,8 @@ project "sandbox"
     includedirs {
         "arcane/src",
         "%{IncludeDir.spdlog}",
-        "%{IncludeDir.GLM}"
+        "%{IncludeDir.GLM}",
+        "%{IncludeDir.IMGUI}"
     }
 
     links {
