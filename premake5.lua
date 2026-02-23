@@ -67,11 +67,13 @@ filter "system:windows"
 		
 filter "configurations:Debug"
 	runtime "Debug"
+    buildoptions "/MDd"
 	symbols "on"
     defines "AE_DEBUG"
 	
 filter "configurations:Release"
 	runtime "Release"
+    buildoptions "/MD"
 	optimize "on"
     defines "AE_RELEASE"
 
@@ -113,10 +115,12 @@ filter "system:windows"
 		
 filter "configurations:Debug"
 	runtime "Debug"
+    buildoptions "/MDd"
 	symbols "on"
     defines "AE_DEBUG"
 	
 filter "configurations:Release"
 	runtime "Release"
+    buildoptions "/MD"
 	optimize "on"
     defines "AE_RELEASE"
