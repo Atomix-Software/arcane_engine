@@ -10,9 +10,11 @@ workspace "arcane_engine"
     IncludeDir = {}
     IncludeDir["spdlog"] = "arcane/vendors/spdlog/include/"
     IncludeDir["GLFW"] = "arcane/vendors/glfw/include/"
+    IncludeDir["GLAD"] = "arcane/vendors/glad/include/"
     IncludeDir["GLM"]  = "arcane/vendors/glm/"
 
     include "arcane/vendors/glfw"
+    include "arcane/vendors/glad"
 
 project "arcane"
     location "arcane"
@@ -38,11 +40,13 @@ project "arcane"
         "arcane/src",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLAD}",
         "%{IncludeDir.GLM}",
     }
 
     links {
         "glfw",
+        "glad",
         "opengl32.lib"
     }
 
