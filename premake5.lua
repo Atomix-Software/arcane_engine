@@ -51,7 +51,8 @@ project "arcane"
     }
 
     defines {
-        "AE_BUILD_DLL"
+        "AE_BUILD_DLL",
+        "GLFW_INCLUDE_NONE"
     }
 
     postbuildcommands

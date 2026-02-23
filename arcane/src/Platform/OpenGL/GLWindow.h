@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Arcane/Core/Window.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Arcane

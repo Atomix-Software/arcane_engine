@@ -1,4 +1,5 @@
 #include "aepch.h"
+#include "Platform/OpenGL/GLWindow.h"
 
 #include "Arcane/Core/Log.h"
 
@@ -6,7 +7,7 @@
 #include "Arcane/Events/KeyEvent.h"
 #include "Arcane/Events/MouseEvent.h"
 
-#include "Platform/OpenGL/GLWindow.h"
+#include <glad/glad.h>
 
 namespace Arcane
 {
@@ -51,6 +52,8 @@ namespace Arcane
 
 		m_Window = glfwCreateWindow((int) m_Data.Width, (int) m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		AE_CORE_ASSERT(status, "Failed to initialize OpenGL!");
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
