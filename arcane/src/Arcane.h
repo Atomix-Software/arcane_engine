@@ -5,6 +5,7 @@
 #include "Arcane/Core/Base.h"
 
 #include "Arcane/Core/Application.h"
+#include "Arcane/Core/Layer.h"
 #include "Arcane/Core/Log.h"
 #include "Arcane/Core/Assert.h"
 
